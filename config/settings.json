@@ -30,6 +30,16 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "matcher": "Bash|Edit|Write|Read|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.alba/hooks/capture-observation.sh",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "PreToolUse": [
