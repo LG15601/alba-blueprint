@@ -1,0 +1,55 @@
+{
+  "mcpServers": {
+    "computer-use": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/computer-use-mcp"]
+    },
+    "macos-automator": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@steipete/macos-automator-mcp"]
+    },
+    "mobile-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@mobilenext/mobile-mcp@latest"]
+    },
+    "elevenlabs": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["elevenlabs-mcp"],
+      "env": {
+        "ELEVENLABS_API_KEY": "${ELEVENLABS_API_KEY}"
+      }
+    },
+    "voicemode": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--refresh", "voice-mode"]
+    },
+    "yt-dlp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@kevinwatt/yt-dlp-mcp@latest"]
+    },
+    "google-workspace": {
+      "type": "stdio",
+      "command": "gws",
+      "args": ["mcp", "start"]
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"]
+    },
+    "brave-search": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      }
+    }
+  }
+}

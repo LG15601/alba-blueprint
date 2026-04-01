@@ -1,0 +1,35 @@
+# Secrets
+.env
+*.env.local
+config/.env
+
+# macOS
+.DS_Store
+._*
+
+# Node
+node_modules/
+package-lock.json
+
+# Claude Code
+.claude/
+CLAUDE.local.md
+settings.local.json
+
+# Logs
+*.log
+logs/
+
+# Temp
+tmp/
+*.tmp
+.cache/
+
+# IDE
+.vscode/
+.idea/
+
+# MCP server clones (installed locally)
+mcp-servers/x-mcp/
+mcp-servers/whatsapp-mcp/
+mcp-servers/mirofish/

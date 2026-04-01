@@ -1,0 +1,104 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.alba/hooks/session-start.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.alba/hooks/session-stop.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.alba/hooks/self-improvement-check.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.alba/hooks/destructive-command-guard.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Glob(**)",
+      "Grep(**)",
+      "WebSearch(**)",
+      "WebFetch(**)",
+      "Agent(**)",
+      "Bash(git *)",
+      "Bash(npm *)",
+      "Bash(brew *)",
+      "Bash(ls *)",
+      "Bash(pwd)",
+      "Bash(which *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(date *)",
+      "Bash(echo *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(gws *)",
+      "Bash(yt-dlp *)",
+      "Bash(ollama *)",
+      "Bash(claude *)",
+      "Bash(gsd *)",
+      "Bash(tmux *)",
+      "Bash(python3 *)",
+      "Bash(node *)",
+      "Bash(bun *)",
+      "Bash(gh *)",
+      "Bash(ffmpeg *)",
+      "Bash(rg *)",
+      "Bash(fd *)",
+      "Bash(jq *)",
+      "Bash(curl *)",
+      "Bash(docker *)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(sudo rm -rf *)"
+    ]
+  },
+  "enabledPlugins": {
+    "telegram@claude-plugins-official": true,
+    "discord@claude-plugins-official": true,
+    "claude-mem@thedotmack": true,
+    "compound-engineering@compound-engineering-plugin": true
+  },
+  "effortLevel": "high",
+  "skipDangerousModePermissionPrompt": true,
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80"
+  }
+}
