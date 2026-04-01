@@ -1,0 +1,53 @@
+{
+  "brief": {
+    "schedule": "07:00",
+    "timezone": "Europe/Paris",
+    "target_read_time_min": 3,
+    "output_dir": "/Users/alba/Desktop/Alba/agent-world/morning-brief/output",
+    "template_dir": "/Users/alba/Desktop/Alba/agent-world/morning-brief/templates"
+  },
+  "email_accounts": [
+    {
+      "address": "sales@orchestraintelligence.fr",
+      "label": "OI Sales",
+      "priority": 1
+    },
+    {
+      "address": "ludovic.goutel@gmail.com",
+      "label": "Personnel",
+      "priority": 2
+    },
+    {
+      "address": "ludovic@orchestraintelligence.fr",
+      "label": "OI Ludovic",
+      "priority": 3
+    }
+  ],
+  "calendar_accounts": [
+    "sales@orchestraintelligence.fr",
+    "ludovic.goutel@gmail.com"
+  ],
+  "github": {
+    "org": "orchestra-studio"
+  },
+  "clients": [
+    { "name": "Wella", "mrr": "15000", "status": "V2 dev", "contact": "Pepy" },
+    { "name": "La Loge", "mrr": "—", "status": "1707 salons", "contact": "" },
+    { "name": "Smart Renovation", "mrr": "—", "status": "Triptyque done", "contact": "" },
+    { "name": "Le Chantier IA", "mrr": "—", "status": "4 phases done", "contact": "" },
+    { "name": "Imagin Funéraire", "mrr": "—", "status": "CRM active", "contact": "" }
+  ],
+  "drive": {
+    "account": "sales@orchestraintelligence.fr",
+    "root_folder_id": "1HlcktyNwGKyTxOMfc96Oa2KGU_eTsmtZ"
+  },
+  "health_check_script": "/Users/alba/Desktop/Alba/scripts/health-check.sh",
+  "memory_files": [
+    "/Users/alba/.middleman/memory/alba.md"
+  ],
+  "variants": {
+    "monday": ["weekend_recap"],
+    "friday": ["week_review"],
+    "first_of_month": ["monthly_report"]
+  }
+}

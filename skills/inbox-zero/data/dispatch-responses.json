@@ -1,0 +1,61 @@
+{
+  "templates": {
+    "receipt_acknowledged": {
+      "trigger": "receipt|invoice|facture|reçu",
+      "action": "log_and_archive",
+      "note": "Logged to comptabilite pipeline"
+    },
+    "github_ci_pass": {
+      "trigger": "CI passed|build succeeded|checks passed",
+      "action": "archive",
+      "note": "CI green — no action needed"
+    },
+    "github_ci_fail": {
+      "trigger": "CI failed|build failed|checks failed",
+      "action": "flag_for_codeops",
+      "note": "CI red — flagged for code-ops agent"
+    },
+    "subscription_confirmation": {
+      "trigger": "subscription|renewed|abonnement",
+      "action": "log_and_archive",
+      "note": "Subscription confirmed — logged"
+    },
+    "security_alert": {
+      "trigger": "security alert|dependabot|vulnerability",
+      "action": "flag_for_codeops",
+      "note": "Security alert — flagged for code-ops"
+    },
+    "shipping_tracking": {
+      "trigger": "shipping|livraison|tracking|expédié",
+      "action": "archive",
+      "note": "Shipping update — archived"
+    },
+    "password_reset": {
+      "trigger": "password reset|mot de passe|verify your email",
+      "action": "archive",
+      "note": "Auth email — archived (not requested = ignore)"
+    },
+    "calendar_notification": {
+      "trigger": "calendar notification|event reminder|rappel",
+      "action": "archive",
+      "note": "Calendar reminder — archived"
+    }
+  },
+  "prep_drafts": {
+    "meeting_request": {
+      "trigger": "meeting|rendez-vous|réunion|call|appel",
+      "draft_fr": "Bonjour,\n\nMerci pour votre message. Je reviens vers vous rapidement avec mes disponibilités.\n\nCordialement,\nLudovic Goutel\nOrchestra Intelligence",
+      "draft_en": "Hello,\n\nThank you for reaching out. I'll get back to you shortly with my availability.\n\nBest regards,\nLudovic Goutel\nOrchestra Intelligence"
+    },
+    "business_inquiry": {
+      "trigger": "devis|quote|pricing|tarif|interested|intéressé",
+      "draft_fr": "Bonjour,\n\nMerci pour votre intérêt pour Orchestra Intelligence. Je serais ravi d'échanger sur vos besoins.\n\nPourriez-vous me préciser :\n- Votre contexte et enjeux actuels\n- Le périmètre envisagé\n- Votre timeline idéale\n\nJe vous propose un créneau de 30 minutes cette semaine pour en discuter.\n\nCordialement,\nLudovic Goutel\nFounder, Orchestra Intelligence\n+33 X XX XX XX XX",
+      "draft_en": "Hello,\n\nThank you for your interest in Orchestra Intelligence. I'd love to discuss your needs.\n\nCould you share:\n- Your current context and challenges\n- The scope you're considering\n- Your ideal timeline\n\nI'd suggest a 30-minute call this week to discuss further.\n\nBest regards,\nLudovic Goutel\nFounder, Orchestra Intelligence"
+    },
+    "client_update": {
+      "trigger": "update|mise à jour|avancement|progress",
+      "draft_fr": "Bonjour,\n\nMerci pour cette mise à jour. J'ai bien noté les points suivants :\n- [POINT 1]\n- [POINT 2]\n\nJe reviens vers vous avec [NEXT_ACTION].\n\nCordialement,\nLudovic Goutel",
+      "draft_en": "Hello,\n\nThank you for the update. I've noted the following:\n- [POINT 1]\n- [POINT 2]\n\nI'll get back to you with [NEXT_ACTION].\n\nBest regards,\nLudovic Goutel"
+    }
+  }
+}

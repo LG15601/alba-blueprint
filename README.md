@@ -10,26 +10,37 @@ Built on **Claude Code Opus 4.6** (1M context) with the best patterns stolen fro
 
 ## What Alba Can Do
 
-| Capability | How |
-|-----------|-----|
-| **Run 24/7** | tmux + launchd + watchdog with auto-restart |
-| **Talk via Telegram, Slack, Discord, iMessage** | Claude Code Channels |
-| **Talk via WhatsApp** | whatsapp-mcp bridge |
-| **Control the entire Mac** | Computer Use MCP (screen, keyboard, mouse) |
-| **Control a phone** | Mobile MCP (Android ADB / iOS Simulator) |
-| **Speak and listen** | ElevenLabs TTS + VoiceMode (Whisper STT) |
-| **Read and send emails** | Google Workspace CLI + Gmail MCP |
-| **Post and monitor Twitter** | X MCP |
-| **Watch YouTube videos** | yt-dlp MCP + Whisper transcription |
-| **Manage calendar** | Google Calendar MCP |
-| **Delegate to sub-agents** | Parallel Agent tool (10+ simultaneous) |
-| **Self-improve every session** | Hermes-style eval loops + OpenClaw pattern promotion |
-| **Run nightly maintenance** | Cron jobs: update tools, monitor repos, consolidate memory |
-| **Simulate decisions** | MiroFish-Offline (100+ AI personas react to your announcement) |
-| **Organize as a company** | Paperclip-style org chart with departments |
-| **Share memory with other agents** | Bidirectional rsync with VPS |
-| **Know every tool it has** | Auto-updated tool registry |
-| **Create skills on the fly** | Auto-generates skills from successful complex tasks |
+### Production (working now)
+| Capability | How | Status |
+|-----------|-----|--------|
+| **Run 24/7** | tmux + launchd + watchdog with auto-restart | Deployed |
+| **Classify 3 mailboxes** | DPYS engine: 13 rules, VIP tiers, sentiment detection | Deployed |
+| **Morning briefings** | 6 data sources: email, calendar, GitHub, pipeline, health, Drive | Deployed |
+| **Client CRM** | Health scoring (weighted formula), relance checker, reports | Deployed |
+| **System monitoring** | 10-point health check: disk, Docker, Tailscale, CRON, secrets | Deployed |
+| **AI/Tech intelligence** | 10 YouTube, 14 Twitter, 6 RSS feeds — daily digest | Deployed |
+| **Memory security** | 38 threat patterns + invisible Unicode detection | Deployed |
+| **Talk via Telegram** | Claude Code Channels plugin | Deployed |
+| **Delegate to sub-agents** | Parallel Agent tool (10+ simultaneous) | Deployed |
+| **Self-improve every session** | 3-loop engine: micro (15 calls) / session / nightly | Deployed |
+
+### Configured (ready to activate)
+| Capability | How | Status |
+|-----------|-----|--------|
+| **Talk via Slack, Discord** | Claude Code Channels plugins | Ready |
+| **Read/send emails via MCP** | Gmail MCP + Google Workspace CLI | Ready |
+| **Control the Mac** | Computer Use MCP | Ready (needs permissions) |
+| **Watch YouTube** | yt-dlp MCP + Whisper transcription | Ready |
+| **Web search** | Brave + Exa + Context7 MCP | Ready |
+
+### Planned (setup scripts included)
+| Capability | How | Status |
+|-----------|-----|--------|
+| **Talk via WhatsApp** | whatsapp-mcp bridge | Setup script included |
+| **Control a phone** | Mobile MCP (Android/iOS) | Setup script included |
+| **Speak and listen** | ElevenLabs + VoiceMode (Whisper) | Setup script included |
+| **Post on Twitter/X** | X MCP | Setup script included |
+| **Simulate decisions** | MiroFish-Offline | Setup script included |
 
 ---
 
@@ -92,18 +103,33 @@ gws auth login
 
 ```
 alba-blueprint/
-├── BLUEPRINT.md          # Complete 23-section technical blueprint
-├── config/               # Settings, CLAUDE.md, MCP config, env template
-├── agents/               # Sub-agent definitions (researcher, coder, reviewer...)
-├── skills/               # Custom skills (daily briefing, nightly routine, apex...)
-├── rules/                # Modular rules (.claude/rules/)
-├── hooks/                # Session hooks (self-improvement, security guards)
-├── scripts/              # Launcher, heartbeat, sync, cleanup
-├── launchd/              # macOS auto-start config
-├── memory/               # Memory templates and index
-├── company/              # Org chart, teams, goals (Paperclip pattern)
-├── mcp-servers/          # MCP server setup scripts
-└── docs/                 # Setup guide, troubleshooting, patterns
+├── BLUEPRINT.md              # Complete 23-section technical blueprint
+├── TEAM-PROTOCOL.md          # SWE-AF + GSD team coordination spec
+├── ARCHITECTURE.md           # Design decisions and rationale
+├── config/                   # Settings, CLAUDE.md, MCP config, env template
+├── agents/                   # 6 sub-agent definitions (researcher, coder, reviewer...)
+├── skills/
+│   ├── inbox-zero/           # PRODUCTION: DPYS email classifier (400+ LOC)
+│   ├── morning-brief/        # PRODUCTION: 6-source daily briefing (800+ LOC)
+│   ├── client-manager/       # PRODUCTION: CRM health scoring + relances
+│   ├── veille/               # PRODUCTION: AI/tech intelligence (YouTube, Twitter, RSS)
+│   ├── health-check/         # PRODUCTION: 10-point system monitor
+│   ├── apex/                 # Feature implementation workflow
+│   ├── daily-briefing/       # Claude-native briefing skill
+│   ├── nightly-routine/      # Nightly maintenance automation
+│   ├── self-improve/         # Self-improvement protocol
+│   ├── simulate/             # MiroFish strategic simulation
+│   └── tool-discover/        # Auto tool registry updates
+├── rules/                    # 5 modular rules (.claude/rules/)
+├── hooks/                    # 5 session hooks (self-improvement, security)
+├── scripts/                  # Launcher, heartbeat, sync, cleanup
+│   └── security/             # memory_guard.py (38 threat patterns)
+├── data/                     # Real client data, pipeline, veille sources
+├── launchd/                  # macOS auto-start config
+├── memory/                   # Memory templates and index
+├── company/                  # Org chart, teams, goals (Paperclip pattern)
+├── mcp-servers/              # 4 MCP server setup scripts
+└── docs/                     # Sources, autoresearch program
 ```
 
 ---
@@ -159,4 +185,4 @@ MIT -- Orchestra Intelligence, 2026
 
 ---
 
-*Built with 12 parallel research agents by Zoe (Claude Opus 4.6, 1M context) for Orchestra Intelligence.*
+*Research: 12 parallel agents by Zoe (VPS). Production code: Alba (Mac Mini). Merged into one unified repo.*

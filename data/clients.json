@@ -1,0 +1,581 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "last_updated": "2026-03-07T06:55:00Z",
+    "updated_by": "alba-agent",
+    "total_clients": 10,
+    "total_mrr": 21500,
+    "currency": "EUR"
+  },
+  "clients": [
+    {
+      "id": "wella",
+      "name": "Wella (Henkel Group)",
+      "tier": "platinum",
+      "status": "active",
+      "contact": {
+        "primary": {
+          "name": "Pepy (Spyridoula Panagiotopoulou)",
+          "email": "Spyridoula.Panagiotopoulou@wella.com",
+          "role": "Procurement — Primary Contact"
+        },
+        "secondary": [
+          {
+            "name": "Thibault Muller-Bronn",
+            "email": "thibault.muller-bronn@wella.com",
+            "role": "Pro Brands"
+          },
+          {
+            "name": "Vincent Arribas",
+            "email": "vincent.arribas@wella.com",
+            "role": "Scout POC Lead"
+          },
+          {
+            "name": "Maxime Anguenot",
+            "email": "maxime.anguenot@wella.com",
+            "role": "Lead Follow-up"
+          },
+          {
+            "name": "Rosalia Rosalinas",
+            "email": "rosalia.rosalinas@wella.com",
+            "role": "Security / Pre-ARB"
+          },
+          {
+            "name": "Baythanee Chan",
+            "email": "Baythanee.Chan@wella.com",
+            "role": "Supplier Registration"
+          }
+        ]
+      },
+      "contract": {
+        "type": "agent-studio",
+        "mrr": 15000,
+        "currency": "EUR",
+        "start_date": "2025-10-01",
+        "status": "active",
+        "dev_rate_day": 950,
+        "setup_fee": 4500,
+        "billing_cycle": "monthly"
+      },
+      "project": {
+        "name": "La Loge Scout",
+        "current_phase": "V2 Development",
+        "stack": "Next.js 16 + React 19 + Supabase + Tailwind v4 + ShadCN",
+        "repo": "orchestra-studio/laloge-Scout",
+        "deployment": "laloge-scout-2.vercel.app",
+        "supabase_project": "lhimlzvslcvdcdqmaadg",
+        "vercel_project": "prj_XE33DxpMan40tMSZFMJzuQetBJb7",
+        "next_milestone": "V2 Live — April 2026",
+        "key_metrics": {
+          "salons_total": 1707,
+          "salons_enriched": 513,
+          "brands": 6,
+          "agent_engine_agents": 9,
+          "crm_pages": 10
+        }
+      },
+      "health": {
+        "score": 88,
+        "last_contact_date": "2026-03-04",
+        "last_contact_type": "email",
+        "last_contact_subject": "Suivi lead Orchestra + Bilan Wella Scout POC",
+        "last_invoice_date": "2026-02-19",
+        "risk_level": "low",
+        "open_items": [
+          "Ariba supplier registration pending (Baythanee Chan)",
+          "Security assessment red flag (Rosalia Rosalinas)",
+          "Pre-ARB consult pending"
+        ]
+      },
+      "notes": "Global Tier €15K/month. 5 service areas. Ariba supplier registration submitted. Security assessment in progress. POC Auvergne-Rhône-Alpes bilan sent. 22-email thread with Thibault on Pro Brands intro."
+    },
+    {
+      "id": "smart-renovation",
+      "name": "Smart Renovation",
+      "tier": "gold",
+      "status": "active",
+      "contact": {
+        "primary": {
+          "name": "Smart Renovation Team",
+          "email": null,
+          "role": "Client — Dubai"
+        }
+      },
+      "contract": {
+        "type": "agent-studio",
+        "mrr": 3500,
+        "currency": "EUR",
+        "start_date": "2025-06-01",
+        "status": "active",
+        "billing_cycle": "monthly"
+      },
+      "project": {
+        "name": "Smart Renovation Triptyque",
+        "current_phase": "Active Development",
+        "stack": "Next.js + FastAPI + Supabase + Expo (mobile)",
+        "repo": "orchestra-studio/smart-renovation",
+        "deployment": "smartrenovation.ae",
+        "next_milestone": "Website V1 deploy + UAT",
+        "components": [
+          "B2B App (construction site mgmt, CRM, AI agents)",
+          "B2C Client App (project config, tracking, premium UX)",
+          "Website (lead capture, SEO, conversion)"
+        ],
+        "completed": [
+          "Audit (10 P0 + 9 P1 fixed)",
+          "Website V1 + V2 (52+ files)",
+          "SEO migration (211 redirects)",
+          "CRM AI Agents (4 agents + orchestrator)",
+          "Test suite (84 tests)",
+          "3D immersive feature",
+          "Arabic i18n"
+        ]
+      },
+      "health": {
+        "score": 80,
+        "last_contact_date": "2026-03-06",
+        "last_contact_type": "github",
+        "last_contact_subject": "Vercel deploy — project UI redesign + triptyque hardening",
+        "last_invoice_date": null,
+        "risk_level": "low",
+        "open_items": [
+          "Website deploy to production",
+          "UAT with team",
+          "Dashboard premium polish",
+          "Mobile Expo hardening"
+        ]
+      },
+      "notes": "Dubai-based renovation company. Triptyque ecosystem complete. WhatsApp integration critical. International market (English). Benchmark: janinestone.com."
+    },
+    {
+      "id": "imagin-funeraire",
+      "name": "Imagin Funéraire (Imagin Communication)",
+      "tier": "silver",
+      "status": "active",
+      "contact": {
+        "primary": {
+          "name": "B. Montil",
+          "email": "b.montil@imagincommunication.fr",
+          "role": "Admin"
+        },
+        "secondary": [
+          {
+            "name": "N. Audubert",
+            "email": "n.audubert@imagincommunication.fr",
+            "role": "Member"
+          },
+          {
+            "name": "Cécile Pégourié",
+            "email": "c.pegourie@imagincommunication.fr",
+            "role": "Finance / Billing"
+          },
+          {
+            "name": "Aurélie Sol",
+            "email": "a.sol@imagincommunication.fr",
+            "role": "Operations"
+          }
+        ]
+      },
+      "contract": {
+        "type": "agent-studio",
+        "mrr": 3000,
+        "currency": "EUR",
+        "start_date": "2025-01-01",
+        "status": "active",
+        "billing_cycle": "monthly"
+      },
+      "project": {
+        "name": "Imagin CRM",
+        "current_phase": "Maintenance + Tickets",
+        "stack": "FastAPI + Supabase + Vercel (frontend) + Render (backend)",
+        "repo": null,
+        "deployment": {
+          "frontend": "imagin-funeraire.vercel.app",
+          "backend": "imagin-crm-api.onrender.com"
+        },
+        "supabase_project": "adadlhqeionbhwbhoxob",
+        "next_milestone": "Resolve open tickets + OCR stabilization",
+        "features": [
+          "CRM",
+          "OCR (Gemini Vision)",
+          "Ticket management",
+          "Support system"
+        ]
+      },
+      "health": {
+        "score": 70,
+        "last_contact_date": "2026-02-25",
+        "last_contact_type": "email",
+        "last_contact_subject": "IMAGIN - Encaissements clients",
+        "last_invoice_date": null,
+        "risk_level": "medium",
+        "open_items": [
+          "5 open tickets from B. Montil (2026-03-04)",
+          "OCR async fix deployed — needs validation",
+          "Sellsy contacts re-sync needed",
+          "Supabase RLS migration pending"
+        ]
+      },
+      "notes": "Funeral services CRM. OCR root cause fixed (asyncio.to_thread). 5 new tickets pending. Last email contact 10 days ago — needs follow-up."
+    },
+    {
+      "id": "le-chantier-ia",
+      "name": "Le Chantier IA",
+      "tier": "silver",
+      "status": "development",
+      "contact": {
+        "primary": {
+          "name": "Xavier Vironneau",
+          "email": "xavier@orchestraintelligence.fr",
+          "role": "Co-founder / Internal"
+        }
+      },
+      "contract": {
+        "type": "internal-product",
+        "mrr": 0,
+        "currency": "EUR",
+        "start_date": "2025-09-01",
+        "status": "pre-revenue",
+        "pricing": {
+          "solo": 29,
+          "equipe": 99,
+          "pro": 249
+        }
+      },
+      "project": {
+        "name": "Le Chantier IA",
+        "current_phase": "All 4 phases complete — Pre-deployment",
+        "stack": "Next.js 16 + FastAPI + Supabase + Gemini ADK + Tailwind v4",
+        "repo": "orchestra-studio/lechantier",
+        "deployment": null,
+        "next_milestone": "Staging deployment + E2E tests",
+        "stats": {
+          "frontend_routes": 74,
+          "python_files": 144,
+          "adk_agents": 13,
+          "routers": 44,
+          "services": 22
+        }
+      },
+      "health": {
+        "score": 70,
+        "last_contact_date": "2026-03-02",
+        "last_contact_type": "email",
+        "last_contact_subject": "chantier ia (Xavier Vironneau)",
+        "last_invoice_date": null,
+        "risk_level": "medium",
+        "open_items": [
+          "Deploy staging (Vercel + Render + Supabase)",
+          "E2E tests",
+          "PWA config",
+          "Landing page"
+        ]
+      },
+      "notes": "Construction ERP, AI-first. Competitor: Vertuoza. All 4 dev phases complete. 74 routes, 13 agents, 144 Python files. Internal product — pre-revenue. Target: entrepreneurs du bâtiment."
+    },
+    {
+      "id": "la-loge",
+      "name": "La Loge Beauté",
+      "tier": "internal",
+      "status": "active",
+      "contact": {
+        "primary": {
+          "name": "Ludovic Goutel",
+          "email": "ludovic@orchestraintelligence.fr",
+          "role": "Founder — Internal Product"
+        },
+        "secondary": [
+          {
+            "name": "Bonnie",
+            "email": null,
+            "role": "Commerciale"
+          },
+          {
+            "name": "Marie-Pierre",
+            "email": null,
+            "role": "Commerciale"
+          }
+        ]
+      },
+      "contract": {
+        "type": "internal-product",
+        "mrr": 0,
+        "currency": "EUR",
+        "start_date": "2025-01-01",
+        "status": "active",
+        "model": "SaaS — intermediary between brands and salons"
+      },
+      "project": {
+        "name": "La Loge Scout CRM",
+        "current_phase": "Production — Full Régime",
+        "stack": "Next.js 16 + React 19 + Supabase + Tailwind v4 + ShadCN + TanStack",
+        "repo": "orchestra-studio/laloge-Scout",
+        "deployment": "laloge-scout-2.vercel.app",
+        "next_milestone": "85K salons coverage + brand pilots",
+        "key_metrics": {
+          "salons_active": 1707,
+          "salons_enriched": 513,
+          "high_score_salons": 98,
+          "phones_collected": 665,
+          "websites_collected": 408,
+          "brands": 6,
+          "target_salons": 85000
+        },
+        "brands": [
+          "Revlon",
+          "Schwarzkopf",
+          "Wella",
+          "Provalliance",
+          "Myspa",
+          "Saint-Algue"
+        ]
+      },
+      "health": {
+        "score": 70,
+        "last_contact_date": "2026-03-06",
+        "last_contact_type": "internal",
+        "last_contact_subject": "Outreach Carlance for Myspa leads",
+        "last_invoice_date": null,
+        "risk_level": "medium",
+        "open_items": [
+          "Mass enrichment (829 pending salons)",
+          "Close 10 salon mandates + 1 paid brand pilot",
+          "TypeScript strict mode cleanup",
+          "Edge Functions deployment"
+        ]
+      },
+      "notes": "OI's own beauty CRM product. Intermediary between brands and salons. 1,707 salons, 6 brands, 9 AI agents. Business model: represent salons to negotiate with brands. Full Régime features shipped."
+    },
+    {
+      "id": "revlon",
+      "name": "Revlon",
+      "tier": "prospect",
+      "status": "prospect",
+      "contact": {
+        "primary": {
+          "name": "Nathalie Fevrier",
+          "email": "Nathalie.Fevrier@revlon.com",
+          "role": "Contact"
+        }
+      },
+      "contract": {
+        "type": "pending",
+        "mrr": 0,
+        "currency": "EUR",
+        "start_date": null,
+        "status": "prospect"
+      },
+      "project": {
+        "name": null,
+        "current_phase": "Meeting / Demo",
+        "stack": null,
+        "repo": null,
+        "deployment": null,
+        "next_milestone": "Close deal after March 6 meeting"
+      },
+      "health": {
+        "score": 62,
+        "last_contact_date": "2026-03-06",
+        "last_contact_type": "meeting",
+        "last_contact_subject": "Revlon x Orchestra meeting (March 6, 9-10am)",
+        "last_invoice_date": null,
+        "risk_level": "medium",
+        "open_items": []
+      },
+      "notes": "Hot prospect via La Loge / brand partnerships. Meeting held March 6 2026 with Nathalie Fevrier. Xavier shared agent IA video demo. Follow up needed."
+    },
+    {
+      "id": "coral-gardeners",
+      "name": "CoralGardeners",
+      "tier": "bronze",
+      "status": "inactive",
+      "contact": {
+        "primary": {
+          "name": null,
+          "email": null,
+          "role": "Conservation"
+        }
+      },
+      "contract": {
+        "type": "unknown",
+        "mrr": 0,
+        "currency": "EUR",
+        "start_date": null,
+        "status": "inactive"
+      },
+      "project": {
+        "name": null,
+        "current_phase": "Unknown",
+        "stack": null,
+        "repo": null,
+        "deployment": null,
+        "next_milestone": null
+      },
+      "health": {
+        "score": 13,
+        "last_contact_date": null,
+        "last_contact_type": null,
+        "last_contact_subject": null,
+        "last_invoice_date": null,
+        "risk_level": "high",
+        "open_items": []
+      },
+      "notes": "Conservation org. No recent email activity found. Status unclear — needs investigation."
+    },
+    {
+      "id": "winppi",
+      "name": "WINPPI",
+      "tier": "bronze",
+      "status": "inactive",
+      "contact": {
+        "primary": {
+          "name": "Vincent Arribas",
+          "email": "v.arribas@winppi.fr",
+          "role": "Contact"
+        }
+      },
+      "contract": {
+        "type": "unknown",
+        "mrr": 0,
+        "currency": "EUR",
+        "start_date": null,
+        "status": "inactive"
+      },
+      "project": {
+        "name": null,
+        "current_phase": "Dormant",
+        "stack": null,
+        "repo": null,
+        "deployment": null,
+        "next_milestone": null
+      },
+      "health": {
+        "score": 13,
+        "last_contact_date": "2025-10-19",
+        "last_contact_type": "email",
+        "last_contact_subject": "Slide model Wella + Infos paramétrage agent Orchestra",
+        "last_invoice_date": null,
+        "risk_level": "high",
+        "open_items": [
+          "No contact since Oct 2025 — 5 months dormant"
+        ]
+      },
+      "notes": "Vincent Arribas also appears in Wella contacts. Last email Oct 2025 about Wella slide model and agent config. Relationship may be via Wella connection."
+    },
+    {
+      "id": "molie",
+      "name": "Molie",
+      "tier": "bronze",
+      "status": "inactive",
+      "contact": {
+        "primary": {
+          "name": null,
+          "email": null,
+          "role": null
+        }
+      },
+      "contract": {
+        "type": "unknown",
+        "mrr": 0,
+        "currency": "EUR",
+        "start_date": null,
+        "status": "inactive"
+      },
+      "project": {
+        "name": null,
+        "current_phase": "Unknown",
+        "stack": null,
+        "repo": null,
+        "deployment": null,
+        "next_milestone": null
+      },
+      "health": {
+        "score": 13,
+        "last_contact_date": null,
+        "last_contact_type": null,
+        "last_contact_subject": null,
+        "last_invoice_date": null,
+        "risk_level": "high",
+        "open_items": []
+      },
+      "notes": "Listed in OI clients. No email activity found. Status unknown — needs Ludo input."
+    },
+    {
+      "id": "carlance",
+      "name": "Carlance",
+      "tier": "silver",
+      "status": "active",
+      "contact": {
+        "primary": {
+          "name": "Jonathan Dahan",
+          "email": "j.dahan@carlance.fr",
+          "role": "CRM Contact"
+        }
+      },
+      "contract": {
+        "type": "training",
+        "mrr": 0,
+        "currency": "EUR",
+        "start_date": "2026-01-01",
+        "status": "active",
+        "type_detail": "Formation Executive / potential Agent Studio"
+      },
+      "project": {
+        "name": null,
+        "current_phase": "Relationship — outreach for Myspa leads",
+        "stack": null,
+        "repo": null,
+        "deployment": null,
+        "next_milestone": "La Loge Beauté lead sharing for Myspa"
+      },
+      "health": {
+        "score": 60,
+        "last_contact_date": "2026-03-06",
+        "last_contact_type": "email_sent",
+        "last_contact_subject": "La Loge Beauté — nouveau service + base de leads pour Myspa",
+        "last_invoice_date": null,
+        "risk_level": "medium",
+        "open_items": []
+      },
+      "notes": "Beauty/wellness chain. CRM email from Jonathan Dahan Jan 2026. Active outreach March 6 for Myspa leads via La Loge. Training client profile — potential upsell to Agent Studio."
+    }
+  ],
+  "tier_definitions": {
+    "platinum": {
+      "label": "🥇 Platinum",
+      "mrr_min": 10000,
+      "sla_response_hours": 4,
+      "health_check_frequency": "daily"
+    },
+    "gold": {
+      "label": "🥈 Gold",
+      "mrr_min": 3000,
+      "sla_response_hours": 8,
+      "health_check_frequency": "daily"
+    },
+    "silver": {
+      "label": "🥉 Silver",
+      "mrr_min": 1000,
+      "sla_response_hours": 24,
+      "health_check_frequency": "weekly"
+    },
+    "bronze": {
+      "label": "🟤 Bronze",
+      "mrr_min": 0,
+      "sla_response_hours": 48,
+      "health_check_frequency": "bi-weekly"
+    },
+    "internal": {
+      "label": "🏠 Internal",
+      "mrr_min": 0,
+      "sla_response_hours": null,
+      "health_check_frequency": "weekly"
+    },
+    "prospect": {
+      "label": "🎯 Prospect",
+      "mrr_min": 0,
+      "sla_response_hours": 24,
+      "health_check_frequency": "on-activity"
+    }
+  }
+}

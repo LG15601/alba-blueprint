@@ -1,0 +1,187 @@
+{
+  "youtube": {
+    "channels": [
+      {
+        "name": "Anthropic",
+        "url": "https://www.youtube.com/@anthropic-ai",
+        "priority": "high"
+      },
+      {
+        "name": "AI Explained",
+        "url": "https://www.youtube.com/@aiexplained-official",
+        "priority": "high"
+      },
+      {
+        "name": "Matthew Berman",
+        "url": "https://www.youtube.com/@matthew_berman",
+        "priority": "high"
+      },
+      {
+        "name": "Fireship",
+        "url": "https://www.youtube.com/@Fireship",
+        "priority": "medium"
+      },
+      {
+        "name": "Two Minute Papers",
+        "url": "https://www.youtube.com/@TwoMinutePapers",
+        "priority": "medium"
+      },
+      {
+        "name": "Wes Roth",
+        "url": "https://www.youtube.com/@WesRoth",
+        "priority": "medium"
+      },
+      {
+        "name": "David Ondrej",
+        "url": "https://www.youtube.com/@DavidOndrej",
+        "priority": "medium"
+      },
+      {
+        "name": "Cole Medin",
+        "url": "https://www.youtube.com/@ColeMedin",
+        "priority": "high"
+      },
+      {
+        "name": "IndyDevDan",
+        "url": "https://www.youtube.com/@indydevdan",
+        "priority": "high"
+      },
+      {
+        "name": "All About AI",
+        "url": "https://www.youtube.com/@AllAboutAI",
+        "priority": "medium"
+      }
+    ],
+    "keywords": [
+      "claude",
+      "anthropic",
+      "ai agent",
+      "mcp",
+      "claude code",
+      "cursor",
+      "codex",
+      "gemini",
+      "gpt-5",
+      "openai",
+      "agentic"
+    ],
+    "max_age_hours": 24,
+    "languages": [
+      "en",
+      "fr"
+    ]
+  },
+  "twitter": {
+    "accounts": [
+      {
+        "handle": "@AnthropicAI",
+        "priority": "high"
+      },
+      {
+        "handle": "@alexalbert__",
+        "priority": "high",
+        "note": "Alex Albert - Anthropic"
+      },
+      {
+        "handle": "@AmandaAskell",
+        "priority": "high",
+        "note": "Amanda Askell - Anthropic"
+      },
+      {
+        "handle": "@daboross",
+        "priority": "medium",
+        "note": "David Renshaw - Claude Code"
+      },
+      {
+        "handle": "@BarrettZoph",
+        "priority": "medium",
+        "note": "Barrett Zoph - OpenAI"
+      },
+      {
+        "handle": "@kaborosBg",
+        "priority": "medium",
+        "note": "GSD/T\u00c2CHES creator"
+      },
+      {
+        "handle": "@OpenAI",
+        "priority": "high"
+      },
+      {
+        "handle": "@GoogleAI",
+        "priority": "high"
+      },
+      {
+        "handle": "@xaborosx",
+        "priority": "medium"
+      },
+      {
+        "handle": "@skiaboron",
+        "priority": "medium"
+      },
+      {
+        "handle": "@swaborox",
+        "priority": "medium"
+      },
+      {
+        "handle": "@sama",
+        "priority": "medium",
+        "note": "Sam Altman"
+      },
+      {
+        "handle": "@elonmusk",
+        "priority": "low",
+        "note": "AI announcements only"
+      },
+      {
+        "handle": "@ylecun",
+        "priority": "medium",
+        "note": "Yann LeCun - Meta AI"
+      }
+    ],
+    "keywords": [
+      "claude code",
+      "claude 4",
+      "mcp server",
+      "ai agent",
+      "anthropic",
+      "computer use",
+      "agentic coding"
+    ],
+    "max_results_per_account": 10,
+    "max_age_hours": 24
+  },
+  "rss": {
+    "feeds": [
+      {
+        "name": "Anthropic on HN",
+        "url": "https://hnrss.org/newest?q=anthropic&points=20",
+        "priority": "high"
+      },
+      {
+        "name": "OpenAI Blog",
+        "url": "https://openai.com/blog/rss.xml",
+        "priority": "high"
+      },
+      {
+        "name": "Google AI Blog",
+        "url": "https://blog.google/technology/ai/rss/",
+        "priority": "medium"
+      },
+      {
+        "name": "Hacker News AI",
+        "url": "https://hnrss.org/newest?q=claude+OR+anthropic+OR+ai+agent&points=50",
+        "priority": "medium"
+      },
+      {
+        "name": "The Verge AI",
+        "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+        "priority": "low"
+      },
+      {
+        "name": "TechCrunch AI",
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "priority": "low"
+      }
+    ]
+  }
+}

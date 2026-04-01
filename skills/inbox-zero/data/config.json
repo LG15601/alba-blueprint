@@ -1,0 +1,130 @@
+{
+  "version": "1.0.0",
+  "agent": "inbox-zero",
+  "description": "Email Operations Manager — Orchestra Intelligence",
+
+  "accounts": [
+    {
+      "email": "ludovic.goutel@gmail.com",
+      "type": "personal",
+      "priority": "high",
+      "label_prefix": "alba"
+    },
+    {
+      "email": "sales@orchestraintelligence.fr",
+      "type": "business",
+      "priority": "critical",
+      "label_prefix": "alba"
+    },
+    {
+      "email": "ludovic@orchestraintelligence.fr",
+      "type": "business",
+      "priority": "critical",
+      "label_prefix": "alba"
+    }
+  ],
+
+  "scan": {
+    "max_results_per_account": 50,
+    "query_unread": "is:unread",
+    "query_recent": "newer_than:12h",
+    "query_overnight": "newer_than:18h",
+    "body_max_chars": 2000,
+    "timezone": "Europe/Paris"
+  },
+
+  "classification": {
+    "engine": "rules",
+    "api_model": "claude-3-5-haiku-20241022",
+    "api_max_tokens": 300,
+    "confidence_threshold": 0.80,
+    "default_on_low_confidence": "prep"
+  },
+
+  "client_tiers": {
+    "tier1_vip": {
+      "domains": ["wella.com", "henkel.com", "schwarzkopf.com"],
+      "contacts": ["pepy"],
+      "min_classification": "prep",
+      "notes": "Wella = €15K/month deal. Never auto-dispatch."
+    },
+    "tier2_active": {
+      "domains": ["smartrenovation.ae", "smart-renovation.com"],
+      "contacts": [],
+      "min_classification": "prep",
+      "notes": "Smart Renovation — Dubai client, active project"
+    },
+    "tier3_regular": {
+      "domains": ["winppi.com", "molie.fr", "carlance.fr", "imagin-funeraire.fr"],
+      "contacts": [],
+      "min_classification": "prep",
+      "notes": "Regular clients"
+    },
+    "tier4_prospect": {
+      "keywords_budget": ["budget", "devis", "quote", "pricing", "tarif", "€", "eur"],
+      "budget_threshold_for_prep": 5000
+    }
+  },
+
+  "rules": {
+    "skip_domains": [
+      "noreply@", "no-reply@", "mailer-daemon@",
+      "newsletter@", "news@", "marketing@", "promo@",
+      "notification@linkedin.com", "digest@",
+      "mail-rachat.lacentrale.fr", "leboncoin.fr",
+      "cdiscount.com", "amazon.fr", "aliexpress.com",
+      "wish.com", "shein.com", "temu.com"
+    ],
+    "skip_labels": [
+      "CATEGORY_PROMOTIONS", "SPAM", "CATEGORY_SOCIAL"
+    ],
+    "dispatch_domains": [
+      "github.com", "noreply@github.com",
+      "notify@vercel.com", "invoice+statements@vercel.com",
+      "no-reply@supabase.io", "noreply@supabase.com",
+      "noreply@render.com",
+      "noreply@fly.io",
+      "team@hetzner.com",
+      "notification@qonto.com", "noreply@qonto.com",
+      "calendar-notification@google.com",
+      "noreply@tailscale.com",
+      "noreply@docker.com",
+      "noreply@stripe.com"
+    ],
+    "dispatch_keywords_subject": [
+      "CI passed", "CI failed", "build succeeded", "build failed",
+      "merged", "dependabot", "security alert",
+      "receipt", "invoice", "reçu", "facture",
+      "payment received", "paiement reçu",
+      "subscription", "abonnement",
+      "password reset", "verify your email",
+      "shipping", "livraison", "tracking"
+    ],
+    "yours_keywords": [
+      "urgent", "URGENT", "ASAP", "immédiat",
+      "contrat", "contract", "négociation", "negotiation",
+      "juridique", "legal", "RGPD", "GDPR",
+      "plainte", "complaint", "litige", "dispute",
+      "personnel", "personal", "confidentiel", "confidential",
+      "démission", "resignation"
+    ],
+    "yours_tone_negative": [
+      "mécontent", "déçu", "furieux", "inacceptable",
+      "disappointed", "angry", "unacceptable", "frustrated",
+      "problème grave", "serious issue", "escalation"
+    ]
+  },
+
+  "output": {
+    "dir": "/Users/alba/Desktop/Alba/agent-world/inbox-zero/output",
+    "logs_dir": "/Users/alba/Desktop/Alba/agent-world/inbox-zero/logs",
+    "reports_dir": "/Users/alba/Desktop/Alba/04-WORKSPACE/Reports/inbox-zero"
+  },
+
+  "schedule": {
+    "overnight_full": "0 23 * * *",
+    "pre_morning": "30 5 * * *",
+    "business_hours": "*/15 9-18 * * 1-5",
+    "weekend_check": "0 10,14,18 * * 0,6"
+  }
+}
