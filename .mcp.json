@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "alba-memory-search": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["tools/alba-memory-search/index.js"]
+    }
+  }
+}

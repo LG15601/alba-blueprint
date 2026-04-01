@@ -1,0 +1,23 @@
+{
+  "name": "alba-memory-search",
+  "version": "1.0.0",
+  "description": "MCP server for searching alba-memory.db observations via FTS5",
+  "main": "index.js",
+  "bin": {
+    "alba-memory-search": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "mcp",
+    "alba",
+    "memory",
+    "search"
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "better-sqlite3": "^12.8.0"
+  }
+}
