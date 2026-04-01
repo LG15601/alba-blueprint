@@ -3,6 +3,14 @@
 *.env.local
 config/.env
 
+# Sensitive data — NEVER commit
+data/clients.json
+data/pipeline.json
+**/output/
+**/logs/
+**/alerts/
+**/cache/
+
 # macOS
 .DS_Store
 ._*

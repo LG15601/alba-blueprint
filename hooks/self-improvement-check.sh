@@ -11,8 +11,8 @@ echo "$COUNT" > "$COUNTER_FILE"
 
 # Every 15 tool calls, nudge self-assessment
 if [ $((COUNT % 15)) -eq 0 ] && [ "$COUNT" -gt 0 ]; then
-    cat <<'EOF'
-{"hookSpecificOutput":{"additionalContext":"[ALBA SELF-CHECK #'$COUNT'] Quick assessment: Am I on track? Am I being efficient? Should I delegate? Is my approach still correct? If stuck, try a different approach."}}
+    cat <<EOF
+{"hookSpecificOutput":{"additionalContext":"[ALBA SELF-CHECK #${COUNT}] Quick assessment: Am I on track? Am I being efficient? Should I delegate? Is my approach still correct? If stuck, try a different approach."}}
 EOF
 fi
 

@@ -1,0 +1,4 @@
+clients.json
+pipeline.json
+# Real client data — NEVER commit to public repos
+# Copy from private source during install

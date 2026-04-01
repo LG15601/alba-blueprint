@@ -71,10 +71,12 @@ echo ""
 echo "--- Step 5: Skills ---"
 for skill_dir in "$SCRIPT_DIR"/skills/*/; do
     skill_name=$(basename "$skill_dir")
-    mkdir -p ~/.claude/skills/"$skill_name"
-    cp "$skill_dir"SKILL.md ~/.claude/skills/"$skill_name"/
+    # Copy ENTIRE skill directory (SKILL.md + scripts/ + data/)
+    cp -r "$skill_dir" ~/.claude/skills/"$skill_name"
+    # Make scripts executable
+    chmod +x ~/.claude/skills/"$skill_name"/scripts/*.sh 2>/dev/null || true
 done
-ok "$(ls -d "$SCRIPT_DIR"/skills/*/ | wc -l | tr -d ' ') skills installed"
+ok "$(ls -d "$SCRIPT_DIR"/skills/*/ | wc -l | tr -d ' ') skills installed (with scripts + data)"
 
 # Install gstack skills (optional)
 if command -v npx >/dev/null; then

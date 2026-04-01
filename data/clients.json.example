@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "last_updated": "2026-04-01T00:00:00Z",
+    "updated_by": "alba-agent",
+    "total_clients": 2,
+    "total_mrr": 5000,
+    "currency": "EUR"
+  },
+  "clients": [
+    {
+      "id": "example-client",
+      "name": "Example Client",
+      "tier": "gold",
+      "status": "active",
+      "contact": {
+        "primary": {
+          "name": "Jane Doe",
+          "email": "jane@example.com",
+          "role": "CTO"
+        }
+      },
+      "contract": {
+        "type": "agent-studio",
+        "mrr": 3500,
+        "currency": "EUR",
+        "start_date": "2026-01-01",
+        "status": "active"
+      },
+      "project": {
+        "name": "Example Project",
+        "current_phase": "Active Development",
+        "stack": "Next.js + Supabase",
+        "next_milestone": "V1 Launch"
+      },
+      "health": {
+        "score": 80,
+        "last_contact_date": "2026-03-28",
+        "risk_level": "low",
+        "open_items": []
+      }
+    },
+    {
+      "id": "example-prospect",
+      "name": "Example Prospect",
+      "tier": "prospect",
+      "status": "prospect",
+      "contact": {
+        "primary": {
+          "name": "John Smith",
+          "email": "john@example.com",
+          "role": "CEO"
+        }
+      },
+      "contract": {
+        "type": "pending",
+        "mrr": 0,
+        "currency": "EUR",
+        "status": "prospect"
+      },
+      "project": {
+        "name": null,
+        "current_phase": "Meeting / Demo",
+        "next_milestone": "Close deal"
+      },
+      "health": {
+        "score": 50,
+        "last_contact_date": "2026-03-15",
+        "risk_level": "medium",
+        "open_items": []
+      }
+    }
+  ],
+  "tier_definitions": {
+    "platinum": { "mrr_min": 10000, "sla_response_hours": 4 },
+    "gold": { "mrr_min": 3000, "sla_response_hours": 8 },
+    "silver": { "mrr_min": 1000, "sla_response_hours": 24 },
+    "bronze": { "mrr_min": 0, "sla_response_hours": 48 },
+    "prospect": { "mrr_min": 0, "sla_response_hours": 24 }
+  }
+}

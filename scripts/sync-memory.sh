@@ -13,12 +13,12 @@ mkdir -p "$LOCAL_MEM"
 
 # VPS → Mac (authoritative)
 rsync -az --update \
-    -e "ssh -i $SSH_KEY -o ConnectTimeout=10 -o StrictHostKeyChecking=no" \
+    -e "ssh -i $SSH_KEY -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new" \
     "$VPS_USER@$VPS_HOST:$REMOTE_MEM" "$LOCAL_MEM" 2>/dev/null
 
 # Mac → VPS (new files only)
 rsync -az --ignore-existing \
-    -e "ssh -i $SSH_KEY -o ConnectTimeout=10 -o StrictHostKeyChecking=no" \
+    -e "ssh -i $SSH_KEY -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new" \
     "$LOCAL_MEM" "$VPS_USER@$VPS_HOST:$REMOTE_MEM" 2>/dev/null
 
 exit 0
