@@ -11,8 +11,12 @@ mkdir -p "$LOG_DIR"
 # Log session start
 echo "{\"event\":\"start\",\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"pid\":$$}" >> "$SESSIONS_LOG"
 
-# Load environment
-[ -f "$ALBA_DIR/.env" ] && export $(grep -v '^#' "$ALBA_DIR/.env" | xargs)
+# Load environment (safely)
+if [ -f "$ALBA_DIR/.env" ]; then
+    set -a
+    source "$ALBA_DIR/.env"
+    set +a
+fi
 
 # Reset tool call counter for self-improvement loop
 echo "0" > /tmp/alba-tool-counter 2>/dev/null

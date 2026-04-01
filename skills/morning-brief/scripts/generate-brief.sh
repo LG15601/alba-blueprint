@@ -19,8 +19,8 @@ set -eo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_FILE="${SCRIPT_DIR}/config.json"
 OUTPUT_DIR="${SCRIPT_DIR}/output"
-HEALTH_CHECK="/Users/alba/Desktop/Alba/scripts/health-check.sh"
-MEMORY_FILE="/Users/alba/.middleman/memory/alba.md"
+HEALTH_CHECK="$HOME/.claude/skills/health-check/scripts/health-check.sh"
+MEMORY_FILE="$HOME/.claude/projects/-Users-alba/memory/MEMORY.md"
 
 # Load GOG keyring password
 if [ -f "$HOME/.secrets/.env" ]; then
@@ -251,9 +251,9 @@ if [ -f "$HEALTH_CHECK" ]; then
     ALERTS="${ALERTS}\n- 🔴 **Disque ${DISK_PCT}% plein** — nettoyage nécessaire"
   fi
   
-  # Check Middleman
-  if echo "$HEALTH_OUTPUT" | grep -q "NOT RUNNING"; then
-    ALERTS="${ALERTS}\n- 🔴 **Middleman non actif** — redémarrage nécessaire"
+  # Check Alba agent
+  if echo "$HEALTH_OUTPUT" | grep -q "NOT running"; then
+    ALERTS="${ALERTS}\n- 🔴 **Alba agent non actif** — redémarrage nécessaire"
   fi
   
   # Check Docker
@@ -411,12 +411,12 @@ if [ -n "$DISK_LINE" ]; then
   echo "- **Disque** : ${DISK_LINE}" >> "$OUTPUT_FILE"
 fi
 
-# Middleman status — check if any middleman process is running
-MIDDLEMAN_PID=$(pgrep -f "middleman" 2>/dev/null | head -1 || true)
-if [ -n "$MIDDLEMAN_PID" ]; then
-  echo "- **Middleman** : ✅ Actif (PID: ${MIDDLEMAN_PID})" >> "$OUTPUT_FILE"
+# Alba agent status — check if Claude agent process is running
+ALBA_PID=$(pgrep -f "claude.*channels.*telegram" 2>/dev/null | head -1 || true)
+if [ -n "$ALBA_PID" ]; then
+  echo "- **Alba Agent** : ✅ Actif (PID: ${ALBA_PID})" >> "$OUTPUT_FILE"
 else
-  echo "- **Middleman** : ❌ Non actif" >> "$OUTPUT_FILE"
+  echo "- **Alba Agent** : ❌ Non actif" >> "$OUTPUT_FILE"
 fi
 
 # Docker
@@ -470,7 +470,7 @@ fi
 # Check for CI failures
 if [ -n "$GH_NOTIFICATIONS" ] && echo "$GH_NOTIFICATIONS" | grep -q "failed" 2>/dev/null; then
   FAIL_COUNT=$(echo "$GH_NOTIFICATIONS" | grep -c "failed" 2>/dev/null || echo "0")
-  echo "${RECO_N}. **${FAIL_COUNT} CI failures GitHub** — Vérifier le pipeline Middleman-Orchestra" >> "$OUTPUT_FILE"
+  echo "${RECO_N}. **${FAIL_COUNT} CI failures GitHub** — Vérifier le pipeline" >> "$OUTPUT_FILE"
   RECO_N=$((RECO_N + 1))
 fi
 

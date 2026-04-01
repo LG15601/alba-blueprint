@@ -93,8 +93,7 @@
   "enabledPlugins": {
     "telegram@claude-plugins-official": true,
     "discord@claude-plugins-official": true,
-    "claude-mem@thedotmack": true,
-    "compound-engineering@compound-engineering-plugin": true
+    "claude-mem@thedotmack": true
   },
   "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true,

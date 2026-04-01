@@ -21,7 +21,7 @@ Production daily synthesis pulling from 6 real data sources.
 2. **Calendar** — Today + tomorrow events via `gog calendar`
 3. **GitHub** — Org events + notifications via `gh` CLI
 4. **Client Pipeline** — MRR, health scores, next actions from clients.json
-5. **System Health** — Disk, Docker, Middleman, Tailscale, CRON status
+5. **System Health** — Disk, Docker, Alba agent, Tailscale, LaunchAgents status
 6. **Google Drive** — Recent files in shared OI folder
 
 ## Usage
@@ -42,7 +42,7 @@ bash ~/.claude/skills/morning-brief/scripts/generate-brief.sh --dry-run --stdout
 - Calendar: today + tomorrow
 - Pipeline: client table with MRR
 - GitHub: recent events + notifications
-- System health: disk, Docker, Middleman, Tailscale
+- System health: disk, Docker, Alba agent, Tailscale
 - Alerts (auto-detected)
 - Recommendations (context-aware)
 - Variant sections: Monday (weekend recap), Friday (weekly summary), 1st (monthly report)

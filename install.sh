@@ -78,12 +78,10 @@ for skill_dir in "$SCRIPT_DIR"/skills/*/; do
 done
 ok "$(ls -d "$SCRIPT_DIR"/skills/*/ | wc -l | tr -d ' ') skills installed (with scripts + data)"
 
-# Install gstack skills (optional)
-if command -v npx >/dev/null; then
-    echo "  Installing gstack community skills..."
-    npx skills add https://github.com/garrytan/gstack --skill browse 2>/dev/null && ok "gstack/browse" || warn "gstack/browse skipped"
-    npx skills add https://github.com/garrytan/gstack --skill review 2>/dev/null && ok "gstack/review" || warn "gstack/review skipped"
-    npx skills add https://github.com/garrytan/gstack --skill ship 2>/dev/null && ok "gstack/ship" || warn "gstack/ship skipped"
+# Install gstack skills (optional — only if claude skills CLI available)
+if command -v claude >/dev/null && claude skills list >/dev/null 2>&1; then
+    echo "  Checking for community skills..."
+    warn "Community skill installation requires manual setup — see docs/SETUP-GUIDE.md"
 fi
 echo ""
 
@@ -154,12 +152,11 @@ echo "============================================"
 echo ""
 echo "Next steps:"
 echo ""
-echo "  1. Edit API keys:     nano ~/.alba/.env"
-echo "  2. Google auth:       gws auth login"
-echo "  3. Anthropic auth:    claude login"
-echo "  4. macOS permissions: ~/bin/setup-permissions.sh"
-echo "  5. Start Alba:        ~/bin/start-alba.sh"
-echo "  6. Auto-start:        launchctl load ~/Library/LaunchAgents/com.alba.agent.plist"
+echo "  1. Run onboarding:  bash ~/bin/onboard-alba.sh"
+echo "     (configures permissions, auth, and API keys interactively)"
+echo ""
+echo "  2. Start Alba:      ~/bin/start-alba.sh"
+echo "  3. Auto-start:      launchctl load ~/Library/LaunchAgents/com.alba.agent.plist"
 echo ""
 echo "Optional:"
 echo "  - Twitter:   bash mcp-servers/setup-x-twitter.sh"

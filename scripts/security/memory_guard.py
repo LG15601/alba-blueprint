@@ -212,8 +212,8 @@ def print_report(results: Dict[str, List[Finding]], show_all: bool = True):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="Memory Guard — Security Scanner")
-    parser.add_argument("directory", nargs="?", default=os.path.expanduser("~/.middleman/memory"),
-                        help="Directory to scan (default: ~/.middleman/memory)")
+    parser.add_argument("directory", nargs="?", default=os.path.expanduser("~/.claude/projects"),
+                        help="Directory to scan (default: ~/.claude/projects)")
     parser.add_argument("--file", "-f", help="Scan a single file instead")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     parser.add_argument("--all", action="store_true", help="Show LOW severity too")

@@ -1,6 +1,6 @@
 ---
 name: health-check
-description: "System health monitor with 10+ checks: disk, Docker, Middleman, internet, Tailscale, CRON, secrets, memory, CPU, agent services. Use when asked about system status, health, or 'how's the machine'."
+description: "System health monitor with 10+ checks: disk, Docker, Alba agent, internet, Tailscale, LaunchAgents, secrets, memory, CPU. Use when asked about system status, health, or 'how's the machine'."
 user-invocable: true
 allowed-tools:
   - Bash
@@ -14,7 +14,7 @@ Production-grade 10-point health check with JSON output and Telegram alerting.
 ## Checks
 1. **Disk Space** — free GB, used %, thresholds at 20GB/10GB
 2. **Docker** — container count, unhealthy containers
-3. **Middleman** — process running check
+3. **Alba Agent** — process running check
 4. **Internet** — Anthropic API + Google reachability
 5. **Tailscale** — connection status, peer count
 6. **LaunchAgents** — registered agents, failed agents

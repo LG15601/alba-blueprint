@@ -41,3 +41,23 @@ tmp/
 mcp-servers/x-mcp/
 mcp-servers/whatsapp-mcp/
 mcp-servers/mirofish/
+
+# ── GSD baseline (auto-generated) ──
+.gsd
+Thumbs.db
+*.swp
+*.swo
+*~
+*.code-workspace
+.env.*
+!.env.example
+.next/
+dist/
+build/
+__pycache__/
+*.pyc
+.venv/
+venv/
+target/
+vendor/
+coverage/

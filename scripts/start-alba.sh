@@ -77,8 +77,12 @@ launch_claude() {
     kill_orphans
     sleep 1
 
-    # Load environment
-    [ -f "$HOME/.alba/.env" ] && export $(grep -v '^#' "$HOME/.alba/.env" | xargs 2>/dev/null)
+    # Load environment (safely handle values with spaces)
+    if [ -f "$HOME/.alba/.env" ]; then
+        set -a
+        source "$HOME/.alba/.env"
+        set +a
+    fi
 
     # Launch with channels
     # Add more --channels flags as needed:

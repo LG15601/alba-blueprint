@@ -3,8 +3,8 @@
     "schedule": "07:00",
     "timezone": "Europe/Paris",
     "target_read_time_min": 3,
-    "output_dir": "/Users/alba/Desktop/Alba/agent-world/morning-brief/output",
-    "template_dir": "/Users/alba/Desktop/Alba/agent-world/morning-brief/templates"
+    "output_dir": "~/.claude/skills/morning-brief/output",
+    "template_dir": "~/.claude/skills/morning-brief/templates"
   },
   "email_accounts": [
     {
@@ -41,9 +41,9 @@
     "account": "sales@orchestraintelligence.fr",
     "root_folder_id": "1HlcktyNwGKyTxOMfc96Oa2KGU_eTsmtZ"
   },
-  "health_check_script": "/Users/alba/Desktop/Alba/scripts/health-check.sh",
+  "health_check_script": "~/.claude/skills/health-check/scripts/health-check.sh",
   "memory_files": [
-    "/Users/alba/.middleman/memory/alba.md"
+    "~/.claude/projects/-Users-alba/memory/MEMORY.md"
   ],
   "variants": {
     "monday": ["weekend_recap"],

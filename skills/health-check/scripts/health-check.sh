@@ -64,12 +64,12 @@ else
   add_check "docker" "warning" "not running" "Docker daemon not running"
 fi
 
-# ── 3. Middleman ─────────────────────────────────────────
-if pgrep -f "middleman" > /dev/null 2>&1; then
-  mm_pid=$(pgrep -f 'middleman' | head -1)
-  add_check "middleman" "ok" "PID $mm_pid" "Middleman running"
+# ── 3. Alba Agent ────────────────────────────────────────
+if pgrep -f "claude.*channels.*telegram" > /dev/null 2>&1; then
+  alba_pid=$(pgrep -f 'claude.*channels.*telegram' | head -1)
+  add_check "alba_agent" "ok" "PID $alba_pid" "Alba agent running"
 else
-  add_check "middleman" "critical" "down" "Middleman NOT running"
+  add_check "alba_agent" "critical" "down" "Alba agent NOT running"
 fi
 
 # ── 4. Internet Connectivity ────────────────────────────
@@ -133,7 +133,7 @@ fi
 # ── 8. Secret File Permissions ───────────────────────────
 secrets_ok=0
 secrets_bad=0
-for f in ~/.secrets/.env ~/.middleman/secrets.json ~/.middleman/auth/auth.json ~/.config/satori/satori.json; do
+for f in ~/.alba/.env ~/.alba/secrets.json ~/.config/satori/satori.json; do
   if [[ -f "$f" ]]; then
     perms=$(stat -f "%Lp" "$f")
     if [[ "$perms" == "600" ]]; then
