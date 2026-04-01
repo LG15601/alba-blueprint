@@ -210,8 +210,13 @@ if [[ "${1:-}" == "--check" ]]; then
     if [[ "$perms" == "600" ]]; then
       ok ".env permissions: 600 (owner-only)"
     else
-      warn ".env permissions: $perms (should be 600)"
-      errors=$((errors + 1))
+      chmod 600 "$ENV_FILE" 2>/dev/null
+      if [ $? -eq 0 ]; then
+        ok ".env permissions: fixed $perms → 600"
+      else
+        warn ".env permissions: $perms (should be 600, chmod failed)"
+        errors=$((errors + 1))
+      fi
     fi
   else
     info "No .env file yet"
