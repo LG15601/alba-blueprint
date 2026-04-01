@@ -11,6 +11,7 @@ LOG_TAG="alba-agent"
 MAX_RAM_MB=6000
 MAX_CONSECUTIVE_FAILS=3
 RESTART_COUNT_FILE="/tmp/alba-restart-count"
+ALBA_PROJECT_DIR="$HOME/AZW/alba-blueprint"
 
 log() { logger -t "$LOG_TAG" "$1" 2>/dev/null; echo "[$(date '+%H:%M:%S')] $1"; }
 
@@ -88,14 +89,14 @@ launch_claude() {
     # Add more --channels flags as needed:
     #   --channels 'plugin:slack@claude-plugins-official'
     #   --channels 'plugin:imessage@claude-plugins-official'
+    #   --channels 'plugin:discord@claude-plugins-official'
     tmux new-session -d -s "$SESSION" \
-        "$CLAUDE --dangerously-skip-permissions \
-         --channels 'plugin:telegram@claude-plugins-official' \
-         --channels 'plugin:discord@claude-plugins-official'"
+        "cd $ALBA_PROJECT_DIR && $CLAUDE --dangerously-skip-permissions --channels plugin:telegram@claude-plugins-official"
 
-    # Wait for trust dialog and accept
-    sleep 6
-    tmux send-keys -t "$SESSION" Enter
+    # Wait for Claude to start and handle any startup dialogs
+    sleep 8
+    # Accept any settings dialog if present
+    tmux send-keys -t "$SESSION" Enter 2>/dev/null
     sleep 15
 
     CPID=$(get_claude_pid)

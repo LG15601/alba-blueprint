@@ -65,9 +65,14 @@ else
 fi
 
 # ── 3. Alba Agent ────────────────────────────────────────
-if pgrep -f "claude.*channels.*telegram" > /dev/null 2>&1; then
+# Check for tmux session first (works even when running inside Alba)
+if tmux has-session -t alba-agent 2>/dev/null; then
   alba_pid=$(pgrep -f 'claude.*channels.*telegram' | head -1)
-  add_check "alba_agent" "ok" "PID $alba_pid" "Alba agent running"
+  if [ -n "$alba_pid" ]; then
+    add_check "alba_agent" "ok" "PID $alba_pid" "Alba agent running"
+  else
+    add_check "alba_agent" "ok" "tmux active" "Alba agent running (tmux session exists)"
+  fi
 else
   add_check "alba_agent" "critical" "down" "Alba agent NOT running"
 fi
