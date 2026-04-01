@@ -20,6 +20,7 @@ LOG_FILE="$HOME/logs/alba-agent.log"
 LOG_TAG="alba-agent"
 PIDFILE="/tmp/alba-watchdog.pid"
 RESTART_HISTORY_FILE="/tmp/alba-restart-history"
+START_TIME_FILE="/tmp/alba-start-time"
 
 # ---- Keepalive config ----
 KEEPALIVE_INTERVAL=20         # seconds between idle-prompt nudge checks
@@ -74,12 +75,42 @@ get_claude_pid() {
     pgrep -f "claude.*channels.*telegram" 2>/dev/null | head -1
 }
 
+get_any_claude_pid() {
+    # Broader match: any Claude process (with or without telegram channel)
+    pgrep -f "claude.*--dangerously-skip-permissions" 2>/dev/null | head -1
+}
+
 get_ram_mb() {
     local pid="$1"
     if [ -n "$pid" ]; then
         ps -o rss= -p "$pid" 2>/dev/null | awk '{print int($1/1024)}'
     else
         echo "0"
+    fi
+}
+
+get_uptime_display() {
+    if [ ! -f "$START_TIME_FILE" ]; then
+        echo "unknown"
+        return
+    fi
+    local start_ts now elapsed days hours mins
+    start_ts=$(cat "$START_TIME_FILE" 2>/dev/null || echo "0")
+    now=$(date +%s)
+    elapsed=$((now - start_ts))
+    if [ "$elapsed" -lt 0 ]; then
+        echo "unknown"
+        return
+    fi
+    days=$((elapsed / 86400))
+    hours=$(( (elapsed % 86400) / 3600 ))
+    mins=$(( (elapsed % 3600) / 60 ))
+    if [ "$days" -gt 0 ]; then
+        echo "${days}d ${hours}h"
+    elif [ "$hours" -gt 0 ]; then
+        echo "${hours}h ${mins}m"
+    else
+        echo "${mins}m"
     fi
 }
 
@@ -249,6 +280,7 @@ launch_claude() {
     cpid=$(get_claude_pid)
     if [ -n "$cpid" ]; then
         record_restart
+        date +%s > "$START_TIME_FILE"
         log "Alba started (PID $cpid, RAM $(get_ram_mb "$cpid")MB)"
         return 0
     else
@@ -319,30 +351,59 @@ case "${1:-start}" in
             rm -f "$PIDFILE"
         fi
         rm -f "$NUDGE_COUNT_FILE"
+        rm -f "$START_TIME_FILE"
         rm -f "${ALERT_DIR}"/alba-last-alert-* 2>/dev/null
         log "Stopped"
         exit 0
         ;;
     status)
-        if tmux has-session -t "$SESSION" 2>/dev/null; then
-            cpid=$(get_claude_pid)
-            if [ -n "$cpid" ]; then
-                ram=$(get_ram_mb "$cpid")
-                restarts=$(restarts_last_hour)
-                if [ -f /tmp/alba-auth-expired ]; then
-                    echo "AUTH EXPIRED — Claude PID $cpid running but OAuth token expired. Run: tmux attach -t $SESSION → /login"
-                else
-                    nudges=0
-                    if [ -f "$NUDGE_COUNT_FILE" ]; then
-                        nudges=$(cat "$NUDGE_COUNT_FILE" 2>/dev/null || echo "0")
-                    fi
-                    echo "HEALTHY — Claude PID $cpid (${ram}MB RAM), restarts/hour: $restarts, nudges: $nudges"
-                fi
-            else
-                echo "DEGRADED — tmux session exists but Claude process not found"
-            fi
-        else
+        # Priority: STOPPED → DEGRADED → AUTH_EXPIRED → TELEGRAM_DEAD → BUSY → HEALTHY
+        if ! tmux has-session -t "$SESSION" 2>/dev/null; then
             echo "STOPPED — no tmux session"
+            exit 0
+        fi
+
+        # Session exists — check for any Claude process (broad match)
+        cpid=$(get_any_claude_pid)
+        if [ -z "$cpid" ]; then
+            echo "DEGRADED — tmux session exists but Claude process not found"
+            exit 0
+        fi
+
+        # Claude is running — gather common stats
+        ram=$(get_ram_mb "$cpid")
+        restarts=$(restarts_last_hour)
+        uptime_str=$(get_uptime_display)
+
+        # AUTH_EXPIRED check
+        if [ -f /tmp/alba-auth-expired ]; then
+            echo "AUTH_EXPIRED — Claude PID $cpid running but OAuth token expired (uptime: $uptime_str). Run: tmux attach -t $SESSION → /login"
+            exit 0
+        fi
+
+        # TELEGRAM_DEAD: Claude is running but no telegram channel process
+        telegram_pid=$(pgrep -f "claude.*channels.*telegram" 2>/dev/null | head -1 || true)
+        if [ -z "$telegram_pid" ]; then
+            echo "TELEGRAM_DEAD — Claude PID $cpid running but Telegram channel not connected (uptime: $uptime_str)"
+            exit 0
+        fi
+
+        # BUSY vs HEALTHY: check if idle prompt is showing
+        pane_raw=$(tmux capture-pane -t "$SESSION" -p 2>/dev/null || true)
+        last_line=$(echo "$pane_raw" \
+            | sed 's/\x1b\[[0-9;]*m//g' \
+            | grep -v '^[[:space:]]*$' \
+            | tail -1)
+
+        nudges=0
+        if [ -f "$NUDGE_COUNT_FILE" ]; then
+            nudges=$(cat "$NUDGE_COUNT_FILE" 2>/dev/null || echo "0")
+        fi
+
+        if echo "$last_line" | grep -qE "^[[:space:]]*${IDLE_PROMPT_PATTERN}[[:space:]]*$"; then
+            echo "HEALTHY — Claude PID $cpid idle ($uptime_str uptime, ${ram}MB RAM, restarts/hour: $restarts, nudges: $nudges)"
+        else
+            echo "BUSY — Claude PID $cpid actively processing ($uptime_str uptime, ${ram}MB RAM, restarts/hour: $restarts)"
         fi
         exit 0
         ;;
