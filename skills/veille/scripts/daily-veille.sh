@@ -2,21 +2,31 @@
 # Daily Veille — AI/Tech Intelligence Gathering
 # Triggered via CRON or manually
 # Uses: yt-dlp (YouTube), Claude WebFetch (web), RSS feeds
-# Output: ~/Desktop/Alba/agent-world/veille/output/YYYY-MM-DD.md
+# Output: skills/veille/output/YYYY-MM-DD.md (relative to repo root)
 
 set -euo pipefail
 
-VEILLE_DIR="$HOME/Desktop/Alba/agent-world/veille"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VEILLE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 OUTPUT_DIR="$VEILLE_DIR/output"
 CACHE_DIR="$VEILLE_DIR/cache"
-SOURCES="$VEILLE_DIR/sources.json"
+# Sources: prefer local sources.json, fall back to data/veille-sources.json in repo root
+if [ -f "$VEILLE_DIR/sources.json" ]; then
+  SOURCES="$VEILLE_DIR/sources.json"
+elif [ -f "$REPO_ROOT/data/veille-sources.json" ]; then
+  SOURCES="$REPO_ROOT/data/veille-sources.json"
+else
+  echo "ERROR: No sources.json found" >&2
+  exit 1
+fi
 TODAY=$(date +%Y-%m-%d)
 OUTPUT_FILE="$OUTPUT_DIR/$TODAY.md"
 LOG_FILE="$VEILLE_DIR/veille.log"
 
 source "$HOME/.secrets/.env" 2>/dev/null || true
 
-log() { echo "[$(date '+%H:%M:%S')] $1" | tee -a "$LOG_FILE"; }
+log() { echo "[$(date '+%H:%M:%S')] $1" >> "$LOG_FILE"; echo "[$(date '+%H:%M:%S')] $1" >&2; }
 
 mkdir -p "$OUTPUT_DIR" "$CACHE_DIR"
 
@@ -93,7 +103,11 @@ for ch in data.get('youtube', {}).get('channels', []):
     
     if [ -n "$videos" ]; then
       echo -e "\n### $name ($priority)" >> "$yt_output"
-      while IFS='|||' read -r title vurl date; do
+      while IFS= read -r line; do
+        [ -z "$line" ] && continue
+        title=$(echo "$line" | awk -F'\\|\\|\\|' '{print $1}')
+        vurl=$(echo "$line" | awk -F'\\|\\|\\|' '{print $2}')
+        date=$(echo "$line" | awk -F'\\|\\|\\|' '{print $3}')
         [ -n "$title" ] && echo "- [$title]($vurl) ($date)" >> "$yt_output"
       done <<< "$videos"
     fi
