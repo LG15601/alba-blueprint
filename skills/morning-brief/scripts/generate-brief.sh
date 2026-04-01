@@ -240,7 +240,7 @@ HEALTH_OUTPUT=""
 ALERTS=""
 
 if [ -f "$HEALTH_CHECK" ]; then
-  HEALTH_OUTPUT=$(safe_cmd bash "$HEALTH_CHECK")
+  HEALTH_OUTPUT=$(timeout 30 bash "$HEALTH_CHECK" 2>/dev/null || true)
   
   # Extract key metrics
   DISK_LINE=$(echo "$HEALTH_OUTPUT" | grep -A1 "DISK:" | tail -1 | sed 's/^  //')

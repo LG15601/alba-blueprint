@@ -13,7 +13,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPORTS_DIR="/Users/alba/Desktop/Alba/04-WORKSPACE/Reports/inbox-zero"
+REPORTS_DIR="${HOME}/logs/inbox-zero"
 DATE_SLUG=$(date +%Y-%m-%d)
 START_TIME=$(date +%s)
 

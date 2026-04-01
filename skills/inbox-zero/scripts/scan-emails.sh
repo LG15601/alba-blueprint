@@ -16,7 +16,9 @@ DATE_SLUG=$(date +%Y-%m-%d)
 
 # ── Load GOG keyring password ──
 if [ -f "$HOME/.secrets/.env" ]; then
-  export GOG_KEYRING_PASSWORD=$(grep GOG_KEYRING_PASSWORD "$HOME/.secrets/.env" | head -1 | cut -d'=' -f2- | tr -d '"' | tr -d "'")
+  set -a
+  source "$HOME/.secrets/.env"
+  set +a
 fi
 
 if [ -z "${GOG_KEYRING_PASSWORD:-}" ]; then
