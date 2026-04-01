@@ -6,6 +6,10 @@
 # 'Never discard' policy — always saves even if extraction is partial.
 #
 # Hook protocol: receives JSON on stdin with tool_name/tool_input/tool_output.
+#
+# Frozen snapshot contract: this hook writes to the DB only.
+# It does NOT regenerate ~/.alba/session-context.md mid-session.
+# Snapshot refreshes on next session only — preserves prompt cache.
 
 # ── Config ────────────────────────────────────────────────────
 DB_PATH="${ALBA_MEMORY_DB:-$HOME/.alba/alba-memory.db}"
