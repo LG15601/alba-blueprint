@@ -4,7 +4,7 @@
 
 Alba is a production-grade blueprint for deploying an autonomous, self-improving AI agent on macOS that controls your entire computer, communicates across all channels, and manages your business 24/7.
 
-Built on **Claude Code** with the best patterns stolen from every major open-source agent project in 2026.
+Built on **Claude Code Opus 4.6** (1M context) with the best patterns stolen from every major open-source agent project in 2026.
 
 ---
 

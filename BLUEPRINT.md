@@ -1,7 +1,7 @@
 # ALBA — The Ultimate AI Agent Blueprint
 
 > **One agent to run the company. An army of sub-agents to do the work.**
-> Built on Claude Code + macOS Computer Use + Multi-Channel + Self-Improvement
+> Built on Claude Code Opus 4.6 (1M context) + macOS Computer Use + Multi-Channel + Self-Improvement
 
 ---
 
@@ -52,7 +52,7 @@ Alba is not just an AI assistant. Alba is the **operating system of Orchestra In
 - **Organizes as a company** — CEO agent with departments (engineering, marketing, sales, support)
 - **Shares memory** bidirectionally with Zoe (VPS agent) via rsync
 - **Knows every tool it has** — maintains a live registry of all CLIs, MCPs, and capabilities
-- **Is better than OpenClaw and Hermes Agent** — combines the best patterns from both with Claude Code's native intelligence
+- **Is better than OpenClaw and Hermes Agent** — combines the best patterns from both with Opus 4.6's native intelligence
 
 ### Design Principles
 
@@ -99,7 +99,7 @@ Alba is not just an AI assistant. Alba is the **operating system of Orchestra In
 
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
-| **Brain** | Claude Code (1M context) | Reasoning, planning, delegation |
+| **Brain** | Claude Opus 4.6 (1M context) | Reasoning, planning, delegation |
 | **Runtime** | Claude Code CLI v2.1.89+ | Tool execution, hooks, skills, channels |
 | **Persistence** | tmux + launchd + watchdog | 24/7 uptime with auto-restart |
 | **Memory** | File-based (MEMORY.md) + claude-mem (SQLite+FTS5) | Cross-session knowledge |
@@ -1419,7 +1419,7 @@ Alba can orchestrate the full pipeline:
                     ┌──────▼───────┐
                     │    ALBA      │
                     │  CEO Agent   │
-                    │  (Claude)  │
+                    │  (Opus 4.6)  │
                     └──────┬───────┘
                            │
           ┌────────────────┼────────────────┐
@@ -1986,6 +1986,6 @@ MIT — Orchestra Intelligence, 2026
 
 ---
 
-*Built with an army of 12 parallel research agents, synthesized by Zoe (Claude Code, 1M context), for Ludovic Goutel and Orchestra Intelligence.*
+*Built with an army of 12 parallel research agents, synthesized by Zoe (Opus 4.6, 1M context), for Ludovic Goutel and Orchestra Intelligence.*
 e.*
 .*
