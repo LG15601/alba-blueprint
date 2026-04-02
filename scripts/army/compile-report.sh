@@ -26,11 +26,10 @@ REPORT_FILE="${REPORTS_DIR}/${REPORT_DATE}.md"
 # ---- Ensure directories ----
 mkdir -p "$REPORTS_DIR" "${ARMY_BASE}/logs"
 
-# ---- Logging ----
+# ---- Centralized logging ----
+source "$(dirname "$0")/../alba-log.sh"
 log() {
-    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $1"
-    logger -t "$LOG_TAG" "$1" 2>/dev/null
-    echo "$msg" >> "$LOG_FILE"
+    alba_log INFO compile-report "$1"
 }
 
 log "Compiling report for ${REPORT_DATE}"

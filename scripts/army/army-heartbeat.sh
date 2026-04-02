@@ -25,11 +25,10 @@ STUCK_THRESHOLD_SEC=$((45 * 60))
 # ---- Ensure directories ----
 mkdir -p "$ACTIVE_DIR" "$QUEUE_DIR" "$FAILED_DIR" "${ARMY_BASE}/logs"
 
-# ---- Logging ----
+# ---- Centralized logging ----
+source "$(dirname "$0")/../alba-log.sh"
 log() {
-    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $1"
-    logger -t "$LOG_TAG" "$1" 2>/dev/null
-    echo "$msg" >> "$LOG_FILE"
+    alba_log INFO army-heartbeat "$1"
 }
 
 rotate_log() {

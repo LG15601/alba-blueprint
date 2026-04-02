@@ -25,11 +25,10 @@ ALBA_PROJECT_DIR="$HOME/AZW/alba-blueprint"
 # ---- Ensure directories ----
 mkdir -p "$QUEUE_DIR" "$ACTIVE_DIR" "$COMPLETED_DIR" "$FAILED_DIR" "${ARMY_BASE}/logs"
 
-# ---- Logging ----
+# ---- Centralized logging ----
+source "$(dirname "$0")/../alba-log.sh"
 log() {
-    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $1"
-    logger -t "$LOG_TAG" "$1" 2>/dev/null
-    echo "$msg" >> "$LOG_FILE"
+    alba_log INFO army-dispatch "$1"
 }
 
 rotate_log() {

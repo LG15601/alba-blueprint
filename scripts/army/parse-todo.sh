@@ -20,11 +20,10 @@ LOG_TAG="army-parse"
 # ---- Ensure directories ----
 mkdir -p "$QUEUE_DIR" "${ARMY_BASE}/logs"
 
-# ---- Logging (matches start-alba.sh pattern) ----
+# ---- Centralized logging ----
+source "$(dirname "$0")/../alba-log.sh"
 log() {
-    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $1"
-    logger -t "$LOG_TAG" "$1" 2>/dev/null
-    echo "$msg" >> "$LOG_FILE"
+    alba_log INFO parse-todo "$1"
 }
 
 # ---- Rotate log ----

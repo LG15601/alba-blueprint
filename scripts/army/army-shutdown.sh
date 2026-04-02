@@ -25,11 +25,10 @@ GRACE_PERIOD_SEC=300  # 5 minutes
 # ---- Ensure directories ----
 mkdir -p "$FAILED_DIR" "${ARMY_BASE}/logs"
 
-# ---- Logging ----
+# ---- Centralized logging ----
+source "$(dirname "$0")/../alba-log.sh"
 log() {
-    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $1"
-    logger -t "$LOG_TAG" "$1" 2>/dev/null
-    echo "$msg" >> "$LOG_FILE"
+    alba_log INFO army-shutdown "$1"
 }
 
 # ---- Task helpers ----
