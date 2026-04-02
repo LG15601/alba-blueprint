@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "tiers": {
+    "block": {
+      "description": "Catastrophic commands — always blocked, no override",
+      "patterns": [
+        {"pattern": "rm\\s+-[^\\s]*r[^\\s]*f[^\\s]*\\s+/\\s*$", "id": "rm_root", "reason": "Recursive force-delete from filesystem root"},
+        {"pattern": "rm\\s+-[^\\s]*r[^\\s]*f[^\\s]*\\s+/\\*", "id": "rm_root_glob", "reason": "Recursive force-delete of all root contents"},
+        {"pattern": "rm\\s+-[^\\s]*r[^\\s]*f[^\\s]*\\s+~/?\\s*$", "id": "rm_home", "reason": "Recursive force-delete of home directory"},
+        {"pattern": "sudo\\s+rm\\s+-[^\\s]*r[^\\s]*f", "id": "sudo_rm_rf", "reason": "Privileged recursive force-delete"},
+        {"pattern": ":\\(\\)\\{\\s*:\\|:&\\s*\\};:", "id": "fork_bomb", "reason": "Fork bomb"},
+        {"pattern": "mkfs\\.", "id": "format_disk", "reason": "Filesystem format"},
+        {"pattern": "dd\\s+if=.*of=/dev/[sh]d", "id": "dd_overwrite", "reason": "Direct disk overwrite"},
+        {"pattern": "chmod\\s+-R\\s+777\\s+/\\s*$", "id": "chmod_root", "reason": "Recursive open permissions on filesystem root"}
+      ]
+    },
+    "warn": {
+      "description": "Risky operations — allowed with warning context",
+      "patterns": [
+        {"pattern": "git\\s+push.*--force", "id": "force_push", "reason": "Force push overwrites remote history"},
+        {"pattern": "git\\s+push.*-f\\s", "id": "force_push_short", "reason": "Force push (short flag) overwrites remote history"},
+        {"pattern": "git\\s+reset\\s+--hard", "id": "hard_reset", "reason": "Hard reset discards uncommitted changes"},
+        {"pattern": "git\\s+checkout\\s+--\\s+\\.", "id": "checkout_all", "reason": "Discard all uncommitted changes"},
+        {"pattern": "git\\s+clean\\s+-fd", "id": "git_clean", "reason": "Remove untracked files and directories"},
+        {"pattern": "DROP\\s+(TABLE|DATABASE)", "id": "drop_sql", "reason": "SQL schema destruction"},
+        {"pattern": "DELETE\\s+FROM", "id": "delete_sql", "reason": "SQL data deletion"},
+        {"pattern": "truncate\\s+", "id": "truncate", "reason": "Data truncation"},
+        {"pattern": "kill\\s+-9", "id": "kill_9", "reason": "Forced process termination"},
+        {"pattern": "pkill\\s+-9", "id": "pkill_9", "reason": "Forced process termination by name"},
+        {"pattern": "docker\\s+system\\s+prune\\s+-a", "id": "docker_prune", "reason": "Remove all unused Docker resources"},
+        {"pattern": "sudo\\s+", "id": "sudo", "reason": "Elevated privileges — verify necessity"}
+      ]
+    }
+  }
+}
