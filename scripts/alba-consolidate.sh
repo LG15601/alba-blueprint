@@ -22,6 +22,7 @@ set -euo pipefail
 
 # ── Configuration ────────────────────────────────────────────
 ALBA_DIR="${ALBA_DIR:-$HOME/.alba}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DB_PATH="${ALBA_DIR}/alba-memory.db"
 MEMORY_FILE="${ALBA_DIR}/MEMORY.md"
 LAST_CONSOLIDATION_FILE="${ALBA_DIR}/last-consolidation"
@@ -428,6 +429,10 @@ main() {
     phase_gather "$gather_file"
     phase_consolidate "$gather_file"
     phase_prune
+
+    # Phase 5: Pattern promotion
+    log "Phase 5: Pattern promotion"
+    bash "$SCRIPT_DIR/promote-patterns.sh" >> "$LOG_FILE" 2>&1 || log "  Pattern promotion failed (non-fatal)"
 
     # Update last-consolidation timestamp
     date +%s > "$LAST_CONSOLIDATION_FILE"

@@ -114,6 +114,19 @@ else
     fi
 fi
 
+# ── Stop: promote-patterns-hook.sh (after extract-learnings) ─
+PROMOTE_CMD="bash ~/.alba/hooks/promote-patterns-hook.sh"
+if hook_exists "Stop" "$PROMOTE_CMD"; then
+    echo "✓ Stop: promote-patterns-hook.sh already registered"
+else
+    changes+=("Stop: promote-patterns-hook.sh")
+    if ! $DRY_RUN; then
+        settings=$(echo "$settings" | jq \
+            --arg cmd "$PROMOTE_CMD" \
+            '.hooks.Stop[0].hooks += [{"type": "command", "command": $cmd, "timeout": 30}]')
+    fi
+fi
+
 # ── Report / Apply ───────────────────────────────────────────
 if [[ ${#changes[@]} -eq 0 ]]; then
     echo "All hooks already registered. No changes needed."
