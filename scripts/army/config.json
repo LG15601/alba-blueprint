@@ -1,0 +1,132 @@
+{
+  "version": "1.0.0",
+  "description": "Alba Army — overnight agent dispatch configuration",
+
+  "schedule": {
+    "army_start": "23:00",
+    "army_stop": "05:30",
+    "shutdown_grace_minutes": 5,
+    "morning_report": "07:00",
+    "heartbeat_interval_minutes": 15,
+    "timezone": "Europe/Paris"
+  },
+
+  "directories": {
+    "base": "~/.alba/army",
+    "queue": "~/.alba/army/queue",
+    "active": "~/.alba/army/active",
+    "completed": "~/.alba/army/completed",
+    "failed": "~/.alba/army/failed",
+    "reports": "~/.alba/army/reports",
+    "logs": "~/.alba/army/logs"
+  },
+
+  "agents": {
+    "email": {
+      "name": "agent-email",
+      "model": "claude-sonnet-4-20250514",
+      "max_turns": 30,
+      "description": "Email drafting, inbox triage, follow-ups",
+      "dispatch": "local"
+    },
+    "prospection": {
+      "name": "agent-prospection",
+      "model": "claude-sonnet-4-20250514",
+      "max_turns": 40,
+      "description": "Lead research, outreach drafts, CRM updates",
+      "dispatch": "local"
+    },
+    "content": {
+      "name": "agent-content",
+      "model": "claude-sonnet-4-20250514",
+      "max_turns": 50,
+      "description": "Blog posts, social media, marketing copy",
+      "dispatch": "local"
+    },
+    "code": {
+      "name": "agent-code",
+      "model": "claude-sonnet-4-20250514",
+      "max_turns": 50,
+      "description": "Feature development, bug fixes, refactoring",
+      "dispatch": "local"
+    },
+    "client": {
+      "name": "agent-client",
+      "model": "claude-sonnet-4-20250514",
+      "max_turns": 30,
+      "description": "Client deliverables, status updates, invoicing prep",
+      "dispatch": "local"
+    },
+    "research": {
+      "name": "agent-research",
+      "model": "claude-sonnet-4-20250514",
+      "max_turns": 40,
+      "description": "Market research, competitive analysis, tech exploration",
+      "dispatch": "local"
+    },
+    "personal": {
+      "name": "agent-personal",
+      "model": "claude-haiku-4-20250414",
+      "max_turns": 20,
+      "description": "Personal errands, reminders, misc tasks",
+      "dispatch": "local"
+    }
+  },
+
+  "priority": {
+    "P0": {
+      "label": "critique",
+      "max_wait_minutes": 0,
+      "retry_limit": 3,
+      "timeout_minutes": 60
+    },
+    "P1": {
+      "label": "haute",
+      "max_wait_minutes": 15,
+      "retry_limit": 2,
+      "timeout_minutes": 45
+    },
+    "P2": {
+      "label": "moyenne",
+      "max_wait_minutes": 60,
+      "retry_limit": 1,
+      "timeout_minutes": 45
+    },
+    "P3": {
+      "label": "basse",
+      "max_wait_minutes": 120,
+      "retry_limit": 0,
+      "timeout_minutes": 30
+    }
+  },
+
+  "dispatch": {
+    "max_concurrent_agents": 3,
+    "max_total_tasks_per_night": 20,
+    "stuck_threshold_minutes": 45,
+    "dispatch_cooldown_seconds": 10,
+    "vps_middleman": {
+      "host": "middleman",
+      "user": "alba",
+      "enabled": false,
+      "comment": "Enable when VPS Middleman is provisioned"
+    }
+  },
+
+  "categories_fr": {
+    "email": ["mail", "email", "e-mail", "envoyer", "repondre", "relancer", "inbox", "courrier", "message"],
+    "prospection": ["prospect", "lead", "client potentiel", "outreach", "demarchage", "pipeline", "crm", "linkedin"],
+    "content": ["article", "blog", "post", "contenu", "rediger", "ecrire", "newsletter", "social", "twitter", "linkedin post"],
+    "code": ["code", "coder", "dev", "developper", "feature", "bug", "fix", "deployer", "script", "api", "site", "app"],
+    "client": ["client", "livrable", "deliverable", "facture", "invoice", "meeting", "reunion", "compte-rendu", "suivi"],
+    "research": ["recherche", "research", "analyser", "etudier", "benchmark", "veille", "competitor", "marche"],
+    "personal": ["perso", "personnel", "rdv", "rendez-vous", "acheter", "commander", "rappeler", "reservation"]
+  },
+
+  "priority_keywords_fr": {
+    "P0": ["urgent", "critique", "asap", "immediatement", "tout de suite", "blocker", "bloquant"],
+    "P1": ["important", "prioritaire", "vite", "rapidement", "des que possible"],
+    "P2": ["quand tu peux", "moyen", "normal"],
+    "P3": ["pas presse", "quand tu as le temps", "un jour", "bonus", "optionnel", "si possible"]
+  }
+}
