@@ -58,7 +58,7 @@ fi
 
 # ── Verify core tables exist ─────────────────────────────────
 tables=$(sqlite3 "$DB_PATH" ".tables")
-for required_table in sessions observations session_summaries observations_fts meta; do
+for required_table in sessions observations session_summaries observations_fts meta logs; do
     if ! echo "$tables" | grep -qw "$required_table"; then
         echo "ERROR: Required table '$required_table' missing after migration" >&2
         exit 1
