@@ -40,6 +40,11 @@
       "glob": "skills/inbox-zero/scripts/*",
       "allow": ["echo_pipe_exec"],
       "reason": "Email classifier pipes output through processing commands"
+    },
+    {
+      "glob": "skills/admin/*",
+      "allow": ["exfil_curl", "destructive_rm_root"],
+      "reason": "Admin skills use curl for API interactions (Qonto, receipt services) and reference rm cleanup patterns in documentation"
     }
   ]
 }
