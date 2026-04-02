@@ -23,6 +23,33 @@ log_denial() {
     echo "[$(date -u '+%Y-%m-%dT%H:%M:%SZ')] DENIED: $reason" >> "$LOG_FILE"
 }
 
+# --- Lane detection ---
+# Classifies spawn requests into lanes: main, cron, subagent, nested.
+# Priority: explicit env var > cron detection > depth-based routing.
+# Fail-open: defaults to "main" on any error.
+detect_lane() {
+    local spawner_depth="${1:-0}"
+
+    # 1. Explicit override via env var
+    if [ -n "${ALBA_LANE:-}" ]; then
+        echo "$ALBA_LANE"
+        return
+    fi
+
+    # 2. Cron detection
+    if [ "${ALBA_CRON:-}" = "1" ] || [ "${ALBA_CRON:-}" = "true" ]; then
+        echo "cron"
+        return
+    fi
+
+    # 3. Depth-based routing (spawner's depth, not child's)
+    case "$spawner_depth" in
+        0) echo "main" ;;
+        1) echo "subagent" ;;
+        *) echo "nested" ;;
+    esac
+}
+
 # --- Lock management (mkdir-based, from M004 pattern) ---
 acquire_lock() {
     local retries=5
@@ -159,6 +186,24 @@ if [ "$CHILD_DEPTH" -gt "$MAX_DEPTH" ]; then
     deny "Max delegation depth exceeded: depth $CHILD_DEPTH would exceed limit of $MAX_DEPTH. Reduce nesting — a subagent should not spawn further subagents at this depth."
 fi
 
+# --- Detect lane ---
+LANE=$(detect_lane "$CURRENT_DEPTH")
+
+# --- Check 2b: Per-lane concurrent limit ---
+# Only enforced when lanes config exists; skip otherwise (backward compat)
+LANE_LIMIT=""
+if [ -f "$CONFIG_FILE" ] && jq -e '.lanes' "$CONFIG_FILE" >/dev/null 2>&1; then
+    LANE_LIMIT=$(jq -r ".lanes.\"$LANE\".maxConcurrent // empty" "$CONFIG_FILE" 2>/dev/null) || LANE_LIMIT=""
+fi
+
+if [ -n "$LANE_LIMIT" ]; then
+    LANE_COUNT=$(echo "$STATE" | jq --arg lane "$LANE" '[.children[] | select(.lane == $lane)] | length')
+    if [ "$LANE_COUNT" -ge "$LANE_LIMIT" ]; then
+        echo "$STATE" | jq . > "$STATE_FILE"
+        deny "Lane '$LANE' concurrent limit reached: $LANE_COUNT/$LANE_LIMIT active in lane. Wait for existing '$LANE' tasks to complete."
+    fi
+fi
+
 # --- Check 3: Blocked tools per agent type ---
 # Extract agent type from tool_input (the 'agent' field in subagent calls)
 AGENT_TYPE=$(echo "$INPUT" | jq -r '.tool_input.agent // empty' 2>/dev/null) || ""
@@ -188,8 +233,8 @@ fi
 
 # --- All checks passed — register child and allow ---
 CHILD_ID="child-${SESSION_ID}-$(date +%s)-$$"
-STATE=$(echo "$STATE" | jq --arg cid "$CHILD_ID" --arg sid "$SESSION_ID" --argjson depth "$CHILD_DEPTH" --argjson ts "$NOW" '
-    .children += [{"id": $cid, "session_id": $sid, "depth": $depth, "timestamp": $ts}]
+STATE=$(echo "$STATE" | jq --arg cid "$CHILD_ID" --arg sid "$SESSION_ID" --argjson depth "$CHILD_DEPTH" --argjson ts "$NOW" --arg lane "$LANE" '
+    .children += [{"id": $cid, "session_id": $sid, "depth": $depth, "timestamp": $ts, "lane": $lane}]
 ')
 echo "$STATE" | jq . > "$STATE_FILE"
 

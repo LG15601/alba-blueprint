@@ -7,5 +7,11 @@
     "worker": ["Bash(rm *)", "Bash(sudo *)"],
     "planner": ["Bash(*)", "Edit(*)", "Write(*)"]
   },
-  "allowedAgentTypes": ["scout", "worker", "planner", "reviewer"]
+  "allowedAgentTypes": ["scout", "worker", "planner", "reviewer"],
+  "lanes": {
+    "main": { "maxConcurrent": 3 },
+    "cron": { "maxConcurrent": 2 },
+    "subagent": { "maxConcurrent": 2 },
+    "nested": { "maxConcurrent": 1 }
+  }
 }
