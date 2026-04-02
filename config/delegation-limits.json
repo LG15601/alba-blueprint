@@ -1,0 +1,11 @@
+{
+  "maxConcurrentChildren": 3,
+  "maxDepth": 2,
+  "staleTTL": 3600,
+  "blockedTools": {
+    "scout": [],
+    "worker": ["Bash(rm *)", "Bash(sudo *)"],
+    "planner": ["Bash(*)", "Edit(*)", "Write(*)"]
+  },
+  "allowedAgentTypes": ["scout", "worker", "planner", "reviewer"]
+}
