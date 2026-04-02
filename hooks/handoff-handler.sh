@@ -130,7 +130,14 @@ if [ -z "$HANDOFF_TYPE" ]; then
     elif echo "$RESULT_TEXT" | grep -qi "qa.*fail\|verification.*fail\|checks.*fail"; then
         HANDOFF_TYPE="qa-fail"
     else
-        HANDOFF_TYPE="standard"
+        # Auto-detect completion: subagent output with summary/artifacts signals
+        HAS_SUMMARY=$(echo "$INPUT" | jq -r '.tool_output.summary // empty' 2>/dev/null) || true
+        HAS_ARTIFACTS=$(echo "$INPUT" | jq -e '.tool_output.artifacts_produced | length > 0' 2>/dev/null) && HAS_ARTIFACTS="yes" || HAS_ARTIFACTS=""
+        if [ -n "$HAS_SUMMARY" ] || [ -n "$HAS_ARTIFACTS" ]; then
+            HANDOFF_TYPE="completion"
+        else
+            HANDOFF_TYPE="standard"
+        fi
     fi
 fi
 
@@ -285,7 +292,18 @@ case "$HANDOFF_TYPE" in
                 next_steps: $next_steps,
                 timestamp: $ts
             }')
-        log_handoff "type=completion task_id=$TASK_ID"
+
+        # Append learnings to ~/logs/learnings.jsonl
+        LEARNINGS_FILE="${LEARNINGS_LOG:-$HOME/logs/learnings.jsonl}"
+        mkdir -p "$(dirname "$LEARNINGS_FILE")" 2>/dev/null || true
+        LEARNINGS_COUNT=$(echo "$LEARNINGS" | jq 'length' 2>/dev/null) || LEARNINGS_COUNT=0
+        if [ "$LEARNINGS_COUNT" -gt 0 ]; then
+            echo "$LEARNINGS" | jq -c --arg ts "$TIMESTAMP" --arg tid "$TASK_ID" '
+                .[] | {timestamp: $ts, task_id: $tid, learning: .}
+            ' >> "$LEARNINGS_FILE" 2>/dev/null || log_handoff "Failed to write learnings to $LEARNINGS_FILE"
+        fi
+
+        log_handoff "type=completion task_id=$TASK_ID learnings_count=$LEARNINGS_COUNT"
         ;;
 
     *)

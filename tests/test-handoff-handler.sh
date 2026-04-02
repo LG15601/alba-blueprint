@@ -65,7 +65,7 @@ run_hook() {
 }
 
 # TAP header
-echo "1..16"
+echo "1..21"
 
 TEST_NUM=0
 pass() { TEST_NUM=$((TEST_NUM + 1)); echo "ok $TEST_NUM - $1"; }
@@ -329,6 +329,131 @@ if [ "$RC" -eq 0 ]; then
     pass "Corrupt state file — fail-open"
 else
     fail "Corrupt state file — fail-open (rc=$RC)"
+fi
+
+# ============================================================
+# Test 17: Successful completion generates completion handoff
+# ============================================================
+write_config
+NOW=$(date +%s)
+cat > "$TEMP_STATE" <<EOF
+{"children":[{"id":"c1","session_id":"sess-comp","depth":1,"timestamp":$NOW,"handoff_type":null,"retry_count":0}]}
+EOF
+reset_handoffs
+run_hook '{"tool_name":"subagent","session_id":"sess-comp","tool_output":{"summary":"Built login page","task_id":"T10","artifacts_produced":["src/login.tsx","src/login.test.tsx"],"learnings":["React portals avoid z-index issues"],"next_steps":["Add forgot-password flow"]}}' >/dev/null
+HANDOFF_FILE=$(ls "$TEMP_HANDOFFS"/*completion*.json 2>/dev/null | head -1)
+if [ -n "$HANDOFF_FILE" ] && jq -e '.type == "completion"' "$HANDOFF_FILE" >/dev/null 2>&1; then
+    pass "Successful completion generates completion handoff"
+else
+    FILES=$(ls "$TEMP_HANDOFFS"/ 2>/dev/null)
+    fail "Successful completion generates completion handoff (files: $FILES)"
+fi
+
+# ============================================================
+# Test 18: Completion handoff contains summary and artifacts_produced
+# ============================================================
+if [ -n "$HANDOFF_FILE" ] && \
+   jq -e '.summary == "Built login page"' "$HANDOFF_FILE" >/dev/null 2>&1 && \
+   jq -e '.artifacts_produced | length == 2' "$HANDOFF_FILE" >/dev/null 2>&1; then
+    pass "Completion handoff contains summary and artifacts_produced"
+else
+    fail "Completion handoff contains summary and artifacts_produced"
+fi
+
+# ============================================================
+# Test 19: Learnings appended to learnings.jsonl
+# ============================================================
+TEMP_LEARNINGS="$TMPDIR_BASE/logs/learnings.jsonl"
+write_config
+NOW=$(date +%s)
+cat > "$TEMP_STATE" <<EOF
+{"children":[{"id":"c2","session_id":"sess-learn","depth":1,"timestamp":$NOW,"handoff_type":null,"retry_count":0}]}
+EOF
+reset_handoffs
+rm -f "$TEMP_LEARNINGS"
+echo '{"tool_name":"subagent","session_id":"sess-learn","tool_output":{"summary":"Optimized queries","task_id":"T11","artifacts_produced":["db/migrations/001.sql"],"learnings":["Use covering indexes","Batch inserts > 100 rows"]}}' | \
+    DELEGATION_CONFIG="$TEMP_CONFIG" \
+    DELEGATION_STATE="$TEMP_STATE" \
+    DELEGATION_LOG="$TEMP_LOG" \
+    HANDOFF_DIR="$TEMP_HANDOFFS" \
+    TEMPLATE_DIR="$TEMP_TEMPLATES" \
+    LEARNINGS_LOG="$TEMP_LEARNINGS" \
+    bash "$HOOK" 2>/dev/null
+LINE_COUNT=$(wc -l < "$TEMP_LEARNINGS" 2>/dev/null | tr -d ' ')
+FIRST_LEARNING=$(head -1 "$TEMP_LEARNINGS" 2>/dev/null | jq -r '.learning' 2>/dev/null)
+if [ "$LINE_COUNT" = "2" ] && [ "$FIRST_LEARNING" = "Use covering indexes" ]; then
+    pass "Learnings appended to learnings.jsonl (2 lines, correct content)"
+else
+    fail "Learnings appended to learnings.jsonl (lines=$LINE_COUNT, first=$FIRST_LEARNING)"
+fi
+
+# ============================================================
+# Test 20: Completion with no learnings — no crash, no learnings written
+# ============================================================
+write_config
+NOW=$(date +%s)
+cat > "$TEMP_STATE" <<EOF
+{"children":[{"id":"c3","session_id":"sess-nolrn","depth":1,"timestamp":$NOW,"handoff_type":null,"retry_count":0}]}
+EOF
+reset_handoffs
+rm -f "$TEMP_LEARNINGS"
+echo '{"tool_name":"subagent","session_id":"sess-nolrn","tool_output":{"summary":"Simple fix","task_id":"T12","artifacts_produced":["fix.sh"]}}' | \
+    DELEGATION_CONFIG="$TEMP_CONFIG" \
+    DELEGATION_STATE="$TEMP_STATE" \
+    DELEGATION_LOG="$TEMP_LOG" \
+    HANDOFF_DIR="$TEMP_HANDOFFS" \
+    TEMPLATE_DIR="$TEMP_TEMPLATES" \
+    LEARNINGS_LOG="$TEMP_LEARNINGS" \
+    bash "$HOOK" 2>/dev/null
+RC=$?
+HANDOFF_FILE=$(ls "$TEMP_HANDOFFS"/*completion*.json 2>/dev/null | head -1)
+if [ "$RC" -eq 0 ] && [ -n "$HANDOFF_FILE" ] && [ ! -f "$TEMP_LEARNINGS" ]; then
+    pass "Completion with no learnings — no crash, no learnings file"
+else
+    fail "Completion with no learnings (rc=$RC, learnings_exists=$([ -f "$TEMP_LEARNINGS" ] && echo yes || echo no))"
+fi
+
+# ============================================================
+# Test 21: Integration — full dev-QA cycle: spawn → fail → retry → fail → retry → fail → escalation
+# ============================================================
+write_config
+NOW=$(date +%s)
+# Simulate a fresh child entry
+cat > "$TEMP_STATE" <<EOF
+{"children":[{"id":"dev1","session_id":"sess-cycle","depth":1,"timestamp":$NOW,"handoff_type":null,"retry_count":0}]}
+EOF
+reset_handoffs
+INTEGRATION_OK=true
+
+# First QA fail → qa-fail, retry_count=1
+run_hook '{"tool_name":"subagent","session_id":"sess-cycle","tool_output":{"verdict":"fail","task_id":"T-cycle","issue_list":[{"description":"Test 1 failed"}]}}' >/dev/null
+F1=$(ls "$TEMP_HANDOFFS"/*qa-fail*.json 2>/dev/null | head -1)
+RC1=$(jq '.retry_count' "$F1" 2>/dev/null)
+[ "$RC1" = "1" ] || INTEGRATION_OK=false
+
+# Second QA fail → qa-fail, retry_count=2
+reset_handoffs
+run_hook '{"tool_name":"subagent","session_id":"sess-cycle","tool_output":{"verdict":"fail","task_id":"T-cycle","issue_list":[{"description":"Test 1 still failed"}]}}' >/dev/null
+F2=$(ls "$TEMP_HANDOFFS"/*qa-fail*.json 2>/dev/null | head -1)
+RC2=$(jq '.retry_count' "$F2" 2>/dev/null)
+[ "$RC2" = "2" ] || INTEGRATION_OK=false
+
+# Third QA fail → escalation, retry_count=3
+reset_handoffs
+run_hook '{"tool_name":"subagent","session_id":"sess-cycle","tool_output":{"verdict":"fail","task_id":"T-cycle","issue_summary":"Persistent failure"}}' >/dev/null
+F3=$(ls "$TEMP_HANDOFFS"/*escalation*.json 2>/dev/null | head -1)
+if [ -z "$F3" ]; then
+    INTEGRATION_OK=false
+else
+    ESC_TYPE=$(jq -r '.type' "$F3" 2>/dev/null)
+    ESC_RC=$(jq '.retry_count' "$F3" 2>/dev/null)
+    [ "$ESC_TYPE" = "escalation" ] && [ "$ESC_RC" = "3" ] || INTEGRATION_OK=false
+fi
+
+if $INTEGRATION_OK; then
+    pass "Integration: full dev-QA cycle — fail×3 → escalation with correct retry progression"
+else
+    fail "Integration: full dev-QA cycle (rc1=$RC1 rc2=$RC2 esc_type=${ESC_TYPE:-?} esc_rc=${ESC_RC:-?})"
 fi
 
 echo "# Done"

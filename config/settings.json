@@ -51,6 +51,16 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash ~/.alba/hooks/handoff-handler.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
             "command": "bash ~/.alba/hooks/delegation-cleanup.sh",
             "timeout": 5
           }
