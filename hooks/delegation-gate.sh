@@ -234,7 +234,7 @@ fi
 # --- All checks passed — register child and allow ---
 CHILD_ID="child-${SESSION_ID}-$(date +%s)-$$"
 STATE=$(echo "$STATE" | jq --arg cid "$CHILD_ID" --arg sid "$SESSION_ID" --argjson depth "$CHILD_DEPTH" --argjson ts "$NOW" --arg lane "$LANE" '
-    .children += [{"id": $cid, "session_id": $sid, "depth": $depth, "timestamp": $ts, "lane": $lane}]
+    .children += [{"id": $cid, "session_id": $sid, "depth": $depth, "timestamp": $ts, "lane": $lane, "handoff_type": null, "retry_count": 0}]
 ')
 echo "$STATE" | jq . > "$STATE_FILE"
 
