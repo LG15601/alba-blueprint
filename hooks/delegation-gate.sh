@@ -10,17 +10,17 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../scripts/alba-log.sh"
+
 CONFIG_FILE="${DELEGATION_CONFIG:-$(cd "$SCRIPT_DIR/.." && pwd)/config/delegation-limits.json}"
 STATE_FILE="${DELEGATION_STATE:-$HOME/.alba/delegation-state.json}"
-LOG_FILE="${DELEGATION_LOG:-$HOME/logs/delegation.log}"
 LOCK_DIR="/tmp/alba-delegation.lock"
 LOCK_STALE_SECONDS=60
 
 # --- Logging ---
 log_denial() {
     local reason="$1"
-    mkdir -p "$(dirname "$LOG_FILE")"
-    echo "[$(date -u '+%Y-%m-%dT%H:%M:%SZ')] DENIED: $reason" >> "$LOG_FILE"
+    alba_log WARN delegation-gate "DENIED: $reason"
 }
 
 # --- Lane detection ---

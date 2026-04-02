@@ -9,8 +9,10 @@
 # Non-blocking: forks a background writer and returns immediately.
 
 # ── Config ────────────────────────────────────────────────────
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../scripts/alba-log.sh"
+
 DB_PATH="${ALBA_MEMORY_DB:-$HOME/.alba/alba-memory.db}"
-LOG_FILE="${HOME}/.alba/logs/capture-session-summary.log"
 SESSION_ID="${CLAUDE_SESSION_ID:-default-$(date +%Y%m%d)}"
 
 # Skip if DB doesn't exist (memory not initialized)
@@ -18,15 +20,13 @@ SESSION_ID="${CLAUDE_SESSION_ID:-default-$(date +%Y%m%d)}"
 
 # ── Fork background writer (parent returns immediately) ───────
 (
-    mkdir -p "$(dirname "$LOG_FILE")"
-
     # ── Count observations by type ────────────────────────────
     obs_count=$(sqlite3 "$DB_PATH" \
         "SELECT COUNT(*) FROM observations WHERE session_id='${SESSION_ID}';" 2>/dev/null)
 
     # Nothing captured this session — skip summary
     if [ -z "$obs_count" ] || [ "$obs_count" -eq 0 ] 2>/dev/null; then
-        echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] SKIP session=${SESSION_ID} no observations" >> "$LOG_FILE"
+        alba_log_bg INFO session-summary "SKIP session=${SESSION_ID} no observations"
         exit 0
     fi
 
@@ -145,7 +145,7 @@ SESSION_ID="${CLAUDE_SESSION_ID:-default-$(date +%Y%m%d)}"
         '${learned_safe}',
         '${completed_safe}',
         '${next_steps_safe}'
-    );" 2>>"$LOG_FILE"
+    );" 2>/dev/null
 
     rc_summary=$?
 
@@ -154,14 +154,14 @@ SESSION_ID="${CLAUDE_SESSION_ID:-default-$(date +%Y%m%d)}"
         ended_at = datetime('now'),
         summary = '${summary_safe}',
         tool_call_count = ${obs_count}
-    WHERE id = '${SESSION_ID}';" 2>>"$LOG_FILE"
+    WHERE id = '${SESSION_ID}';" 2>/dev/null
 
     rc_session=$?
 
     if [ $rc_summary -ne 0 ] || [ $rc_session -ne 0 ]; then
-        echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] FAIL session_summary session=${SESSION_ID} rc_summary=${rc_summary} rc_session=${rc_session}" >> "$LOG_FILE"
+        alba_log WARN session-summary "FAIL session=${SESSION_ID} rc_summary=${rc_summary} rc_session=${rc_session}"
     else
-        echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] OK session=${SESSION_ID} obs=${obs_count}" >> "$LOG_FILE"
+        alba_log INFO session-summary "OK session=${SESSION_ID} obs=${obs_count}"
     fi
 
 ) > /dev/null 2>&1 &

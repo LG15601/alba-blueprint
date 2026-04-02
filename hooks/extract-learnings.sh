@@ -7,8 +7,10 @@
 # Fail-open: never blocks session shutdown.
 
 # ── Config ────────────────────────────────────────────────────
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../scripts/alba-log.sh"
+
 DB_PATH="${ALBA_MEMORY_DB:-$HOME/.alba/alba-memory.db}"
-LOG_FILE="${HOME}/.alba/logs/extract-learnings.log"
 SESSION_ID="${CLAUDE_SESSION_ID:-default-$(date +%Y%m%d)}"
 JSONL_FILE="${HOME}/logs/learnings.jsonl"
 
@@ -20,8 +22,6 @@ sqlite3 "$DB_PATH" ".tables" 2>/dev/null | grep -q 'learnings' || exit 0
 
 # ── Fork background writer (parent returns immediately) ───────
 (
-    mkdir -p "$(dirname "$LOG_FILE")"
-
     inserted=0
     skipped=0
     jsonl_inserted=0
@@ -83,7 +83,7 @@ sqlite3 "$DB_PATH" ".tables" 2>/dev/null | grep -q 'learnings' || exit 0
                 '${hash_safe}',
                 '${category_safe}',
                 datetime('now')
-            );" 2>>"$LOG_FILE"
+            );" 2>/dev/null
 
             if [ $? -eq 0 ]; then
                 # Check if row was actually inserted (changes() = 0 means dedup)
@@ -129,7 +129,7 @@ sqlite3 "$DB_PATH" ".tables" 2>/dev/null | grep -q 'learnings' || exit 0
                 '${hash_safe}',
                 '${cat_safe}',
                 datetime('now')
-            );" 2>>"$LOG_FILE"
+            );" 2>/dev/null
 
             if [ $? -eq 0 ]; then
                 changes=$(sqlite3 "$DB_PATH" "SELECT changes();" 2>/dev/null || echo "0")
@@ -148,7 +148,7 @@ sqlite3 "$DB_PATH" ".tables" 2>/dev/null | grep -q 'learnings' || exit 0
     # ── Log stats ─────────────────────────────────────────────
     total_inserted=$((inserted + jsonl_inserted))
     total_skipped=$((skipped + jsonl_skipped))
-    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] OK session=${SESSION_ID} obs_inserted=${inserted} obs_skipped=${skipped} jsonl_inserted=${jsonl_inserted} jsonl_skipped=${jsonl_skipped} total_inserted=${total_inserted} total_skipped=${total_skipped}" >> "$LOG_FILE"
+    alba_log INFO extract-learnings "OK session=${SESSION_ID} obs_inserted=${inserted} obs_skipped=${skipped} jsonl_inserted=${jsonl_inserted} jsonl_skipped=${jsonl_skipped} total_inserted=${total_inserted} total_skipped=${total_skipped}"
 
 ) > /dev/null 2>&1 &
 

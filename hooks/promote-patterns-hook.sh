@@ -7,14 +7,13 @@
 
 # ── Config ────────────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG_FILE="${HOME}/.alba/logs/promote-patterns.log"
+source "$SCRIPT_DIR/../scripts/alba-log.sh"
 
 # ── Fork background worker (parent returns immediately) ───────
 (
-    mkdir -p "$(dirname "$LOG_FILE")"
-    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] promote-patterns-hook: starting" >> "$LOG_FILE"
-    bash "$SCRIPT_DIR/../scripts/promote-patterns.sh" >> "$LOG_FILE" 2>&1 || true
-    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] promote-patterns-hook: finished" >> "$LOG_FILE"
+    alba_log INFO promote-patterns-hook "starting"
+    bash "$SCRIPT_DIR/../scripts/promote-patterns.sh" > /dev/null 2>&1 || true
+    alba_log INFO promote-patterns-hook "finished"
 ) > /dev/null 2>&1 &
 
 exit 0

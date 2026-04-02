@@ -12,8 +12,10 @@
 # Snapshot refreshes on next session only — preserves prompt cache.
 
 # ── Config ────────────────────────────────────────────────────
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../scripts/alba-log.sh"
+
 DB_PATH="${ALBA_MEMORY_DB:-$HOME/.alba/alba-memory.db}"
-LOG_FILE="${HOME}/.alba/logs/capture-observation.log"
 SESSION_ID="${CLAUDE_SESSION_ID:-default-$(date +%Y%m%d)}"
 PROJECT="${CLAUDE_PROJECT:-$(basename "$(pwd)")}"
 
@@ -40,13 +42,11 @@ esac
 # ── Fork background writer (parent returns immediately) ───────
 # Variables are inherited by the subshell — no temp file needed.
 (
-    mkdir -p "$(dirname "$LOG_FILE")"
-
     # ── Ensure session row exists ─────────────────────────────
     project_safe=$(printf '%s' "$PROJECT" | sed "s/'/''/g")
     sqlite3 "$DB_PATH" \
         "INSERT OR IGNORE INTO sessions (id, project, started_at) VALUES ('${SESSION_ID}', '${project_safe}', datetime('now'));" \
-        2>>"$LOG_FILE" || true
+        2>/dev/null || true
 
     # ── Classify observation type ─────────────────────────────
     obs_type="change"
@@ -132,11 +132,11 @@ esac
         '${files_read_safe}',
         '${files_modified_safe}',
         datetime('now')
-    );" 2>>"$LOG_FILE"
+    );" 2>/dev/null
 
     rc=$?
     if [ $rc -ne 0 ]; then
-        echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] FAIL insert tool=$TOOL_NAME rc=$rc" >> "$LOG_FILE"
+        alba_log WARN capture-observation "FAIL insert tool=$TOOL_NAME rc=$rc"
     fi
 
 ) > /dev/null 2>&1 &

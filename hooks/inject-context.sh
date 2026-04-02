@@ -16,9 +16,11 @@
 set -euo pipefail
 
 # ── Config ────────────────────────────────────────────────────
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../scripts/alba-log.sh"
+
 DB_PATH="${ALBA_MEMORY_DB:-$HOME/.alba/alba-memory.db}"
 OUTPUT_FILE="${ALBA_SESSION_CONTEXT:-$HOME/.alba/session-context.md}"
-LOG_FILE="${HOME}/.alba/logs/inject-context.log"
 
 TOTAL_OBSERVATION_COUNT=30
 FULL_OBSERVATION_COUNT=5
@@ -27,11 +29,11 @@ MAX_CHARS=16000
 
 START_TS=$(date +%s)
 
-mkdir -p "$(dirname "$OUTPUT_FILE")" "$(dirname "$LOG_FILE")"
+mkdir -p "$(dirname "$OUTPUT_FILE")"
 
 # ── Guard: skip if DB doesn't exist ──────────────────────────
 if [ ! -f "$DB_PATH" ]; then
-    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] SKIP no database at ${DB_PATH}" >> "$LOG_FILE"
+    alba_log INFO inject-context "SKIP no database at ${DB_PATH}"
     exit 0
 fi
 
@@ -46,7 +48,7 @@ if [ -f "$OUTPUT_FILE" ]; then
     now=$(date +%s)
     age=$(( now - file_mod ))
     if [ "$age" -lt 300 ]; then
-        echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] SKIP snapshot age=${age}s (<300s)" >> "$LOG_FILE"
+        alba_log INFO inject-context "SKIP snapshot age=${age}s (<300s)"
         exit 0
     fi
 fi
@@ -258,6 +260,6 @@ END_TS=$(date +%s)
 duration=$(( END_TS - START_TS ))
 est_tokens=$(( (ctx_len + 3) / 4 ))
 
-echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] OK observations=${total_in_db} chars=${ctx_len} est_tokens=${est_tokens} duration=${duration}s" >> "$LOG_FILE"
+alba_log INFO inject-context "OK observations=${total_in_db} chars=${ctx_len} est_tokens=${est_tokens} duration=${duration}s"
 
 exit 0

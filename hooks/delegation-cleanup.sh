@@ -10,17 +10,17 @@ set -uo pipefail
 # Note: no set -e — we must never exit non-zero
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../scripts/alba-log.sh"
+
 CONFIG_FILE="${DELEGATION_CONFIG:-$(cd "$SCRIPT_DIR/.." && pwd)/config/delegation-limits.json}"
 STATE_FILE="${DELEGATION_STATE:-$HOME/.alba/delegation-state.json}"
-LOG_FILE="${DELEGATION_LOG:-$HOME/logs/delegation.log}"
 LOCK_DIR="/tmp/alba-delegation.lock"
 LOCK_STALE_SECONDS=60
 
 # --- Logging ---
 log_cleanup() {
     local msg="$1"
-    mkdir -p "$(dirname "$LOG_FILE")" 2>/dev/null || true
-    echo "[$(date -u '+%Y-%m-%dT%H:%M:%SZ')] CLEANUP: $msg" >> "$LOG_FILE" 2>/dev/null || true
+    alba_log INFO delegation-cleanup "$msg"
 }
 
 # --- Lock management (mkdir-based, same as gate hook) ---

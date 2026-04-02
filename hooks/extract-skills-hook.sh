@@ -7,14 +7,13 @@
 
 # ── Config ────────────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG_FILE="${HOME}/.alba/logs/extract-skills.log"
+source "$SCRIPT_DIR/../scripts/alba-log.sh"
 
 # ── Fork background worker (parent returns immediately) ───────
 (
-    mkdir -p "$(dirname "$LOG_FILE")"
-    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] extract-skills-hook: starting" >> "$LOG_FILE"
-    bash "$SCRIPT_DIR/../scripts/extract-skills.sh" >> "$LOG_FILE" 2>&1 || true
-    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] extract-skills-hook: finished" >> "$LOG_FILE"
+    alba_log INFO extract-skills-hook "starting"
+    bash "$SCRIPT_DIR/../scripts/extract-skills.sh" > /dev/null 2>&1 || true
+    alba_log INFO extract-skills-hook "finished"
 ) > /dev/null 2>&1 &
 
 exit 0
