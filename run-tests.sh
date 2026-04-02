@@ -22,6 +22,8 @@ SUITES=(
   tests/test-delegation-cleanup.sh
   tests/test-delegation-lanes.sh
   tests/test-handoff-handler.sh
+  tests/test-heartbeat-proactive.sh
+  tests/test-goals.sh
 )
 
 total_tests=0

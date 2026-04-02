@@ -1,4 +1,5 @@
 #!/bin/bash
+set -u
 # Alba — Weekly cleanup (Sunday 4 AM via cron)
 
 echo "[$(date)] Starting weekly cleanup..."

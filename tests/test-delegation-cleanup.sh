@@ -14,8 +14,12 @@ trap 'rm -rf "$TMPDIR_BASE" /tmp/alba-delegation.lock' EXIT
 TEMP_CONFIG="$TMPDIR_BASE/config/delegation-limits.json"
 TEMP_STATE="$TMPDIR_BASE/state/delegation-state.json"
 TEMP_LOG="$TMPDIR_BASE/logs/delegation.log"
+TEMP_LOGS_DB="$TMPDIR_BASE/alba-logs-test.db"
 
 mkdir -p "$(dirname "$TEMP_CONFIG")" "$(dirname "$TEMP_STATE")" "$(dirname "$TEMP_LOG")"
+
+# Init logs table in test DB
+sqlite3 "$TEMP_LOGS_DB" "CREATE TABLE IF NOT EXISTS logs (id INTEGER PRIMARY KEY, timestamp TEXT, level TEXT, source TEXT, message TEXT, metadata TEXT);" 2>/dev/null
 
 write_config() {
     cat > "$TEMP_CONFIG" <<'CONF'
@@ -40,6 +44,7 @@ run_hook() {
         DELEGATION_CONFIG="$TEMP_CONFIG" \
         DELEGATION_STATE="$TEMP_STATE" \
         DELEGATION_LOG="$TEMP_LOG" \
+        ALBA_LOGS_DB="$TEMP_LOGS_DB" \
         bash "$HOOK" 2>/dev/null) || exit_code=$?
     echo "$output"
     return "$exit_code"
@@ -179,6 +184,7 @@ echo "" | \
     DELEGATION_CONFIG="$TEMP_CONFIG" \
     DELEGATION_STATE="$TEMP_STATE" \
     DELEGATION_LOG="$TEMP_LOG" \
+    ALBA_LOGS_DB="$TEMP_LOGS_DB" \
     bash "$HOOK" >/dev/null 2>&1 && RC=$? || RC=$?
 REMAINING=$(jq '.children | length' "$TEMP_STATE")
 if [ "$RC" -eq 0 ] && [ "$REMAINING" -eq 1 ]; then
@@ -243,12 +249,13 @@ cat > "$TEMP_STATE" <<EOF
   {"id":"c1","session_id":"sess-logged","depth":0,"timestamp":$NOW}
 ]}
 EOF
-rm -f "$TEMP_LOG"
+rm -f "$TEMP_LOG" "$TEMP_LOGS_DB"
+sqlite3 "$TEMP_LOGS_DB" "CREATE TABLE IF NOT EXISTS logs (id INTEGER PRIMARY KEY, timestamp TEXT, level TEXT, source TEXT, message TEXT, metadata TEXT);" 2>/dev/null
 run_hook '{"session_id":"sess-logged"}' >/dev/null 2>&1 && RC=$? || RC=$?
-if [ "$RC" -eq 0 ] && [ -f "$TEMP_LOG" ] && grep -q "CLEANUP" "$TEMP_LOG"; then
-    pass "Cleanup removal logged"
+if [ "$RC" -eq 0 ] && sqlite3 "$TEMP_LOGS_DB" "SELECT COUNT(*) FROM logs WHERE source='delegation-cleanup' AND message LIKE '%Removed%';" 2>/dev/null | grep -qE '^[1-9]'; then
+    pass "Cleanup removal logged to alba-logs.db"
 else
-    fail "Cleanup logging (rc=$RC, log_exists=$([ -f "$TEMP_LOG" ] && echo yes || echo no))"
+    fail "Cleanup logging (rc=$RC, log_exists=$([ -f "$TEMP_LOGS_DB" ] && echo yes || echo no))"
 fi
 
 # ============================================================

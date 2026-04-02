@@ -171,19 +171,19 @@ fi
 # ─────────────────────────────────────────────────────────────
 # 7. Re-injection guard works (skip if <5min old)
 # ─────────────────────────────────────────────────────────────
-# The output file was just written, so running again should skip
+# Check: output file mtime shouldn't have changed (guard skipped regeneration)
+mtime_before=$(stat -f %m "$TEST_OUTPUT" 2>/dev/null || stat -c %Y "$TEST_OUTPUT" 2>/dev/null)
+sleep 1
 guard_output=$(ALBA_MEMORY_DB="$TEST_DB" \
 ALBA_SESSION_CONTEXT="$TEST_OUTPUT" \
 HOME="$TEST_LOG_DIR" \
 bash "$REPO_DIR/hooks/inject-context.sh" 2>&1)
+mtime_after=$(stat -f %m "$TEST_OUTPUT" 2>/dev/null || stat -c %Y "$TEST_OUTPUT" 2>/dev/null)
 
-# Check log for SKIP message
-log_file="$TEST_LOG_DIR/.alba/logs/inject-context.log"
-if [ -f "$log_file" ] && grep -q 'SKIP.*<300s' "$log_file"; then
+if [ "$mtime_before" = "$mtime_after" ]; then
     ok "Re-injection guard: skips when output <5min old"
 else
-    # Also check: output file mtime shouldn't have changed
-    not_ok "Re-injection guard: skips when output <5min old" "no SKIP log entry found"
+    not_ok "Re-injection guard: skips when output <5min old" "output file was regenerated (mtime changed)"
 fi
 
 # ─────────────────────────────────────────────────────────────

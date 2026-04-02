@@ -21,6 +21,8 @@ LOG_TAG="alba-agent"
 PIDFILE="/tmp/alba-watchdog.pid"
 RESTART_HISTORY_FILE="/tmp/alba-restart-history"
 START_TIME_FILE="/tmp/alba-start-time"
+AUTH_CHECK_INTERVAL=4         # check auth every N watchdog cycles (4 × 120s = 8 min)
+AUTH_CHECK_COUNTER=0
 
 # ---- Keepalive config ----
 KEEPALIVE_INTERVAL=20         # seconds between idle-prompt nudge checks
@@ -235,6 +237,20 @@ launch_claude() {
         set +a
     fi
 
+    # Unlock macOS keychain for headless access (gog OAuth tokens, etc.)
+    # Uses OP_SERVICE_ACCOUNT_TOKEN (loaded from .env above) to read keychain password from 1Password
+    if command -v security >/dev/null 2>&1 && command -v op >/dev/null 2>&1; then
+        local kc_pass
+        kc_pass=$(op item get "macOS-Login" --vault Alba-Secrets --fields label=password 2>/dev/null || true)
+        if [ -n "$kc_pass" ]; then
+            security unlock-keychain -p "$kc_pass" "$HOME/Library/Keychains/login.keychain-db" 2>/dev/null && \
+                log "Keychain unlocked for headless access" || \
+                log "WARNING: Keychain unlock failed"
+        else
+            log "WARNING: Could not read keychain password from 1Password — gog may not work"
+        fi
+    fi
+
     # Launch with channels
     tmux new-session -d -s "$SESSION" \
         "cd '$ALBA_PROJECT_DIR' && '$CLAUDE' --dangerously-skip-permissions --channels 'plugin:telegram@claude-plugins-official' ; echo '[ALBA EXITED with code '\$?']' ; sleep infinity"
@@ -259,6 +275,35 @@ launch_claude() {
         pane_content=$(tmux capture-pane -t "$SESSION" -p 2>/dev/null | tail -5)
         log "tmux pane: $pane_content"
         return 1
+    fi
+}
+
+# ---- Proactive auth check (runs every AUTH_CHECK_INTERVAL cycles) ----
+check_auth_status() {
+    AUTH_CHECK_COUNTER=$((AUTH_CHECK_COUNTER + 1))
+    if [ "$AUTH_CHECK_COUNTER" -lt "$AUTH_CHECK_INTERVAL" ]; then
+        return 0
+    fi
+    AUTH_CHECK_COUNTER=0
+
+    # Check Claude CLI auth status
+    local auth_json
+    auth_json=$("$CLAUDE" auth status 2>/dev/null || true)
+    if [ -z "$auth_json" ]; then
+        log "WARNING: Could not check auth status (claude CLI not responding)"
+        return 0
+    fi
+
+    local logged_in
+    logged_in=$(echo "$auth_json" | python3 -c "import sys,json; print(json.load(sys.stdin).get('loggedIn',False))" 2>/dev/null || echo "unknown")
+
+    if [ "$logged_in" = "False" ]; then
+        log "AUTH EXPIRED: Claude CLI reports loggedIn=false"
+        echo "$(date '+%Y-%m-%d %H:%M:%S') Claude auth expired (proactive check)" > /tmp/alba-auth-expired
+        send_alert "auth" "Claude auth token expired — run 'claude login' on Mac Mini"
+        alba_log CRITICAL watchdog "Claude auth token expired — loggedIn=false"
+    else
+        rm -f /tmp/alba-auth-expired 2>/dev/null
     fi
 }
 
@@ -417,6 +462,7 @@ while true; do
 
     if is_healthy; then
         FAIL_COUNT=0
+        check_auth_status
     else
         FAIL_COUNT=$((FAIL_COUNT + 1))
         log "Health check failed ($FAIL_COUNT/$MAX_CONSECUTIVE_FAILS)"

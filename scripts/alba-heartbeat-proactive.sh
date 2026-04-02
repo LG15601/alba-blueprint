@@ -179,6 +179,86 @@ handler_email() {
     return 0
 }
 
+# ── API Keys Health Check ────────────────────────────────────
+handler_api_keys() {
+    # Source .env for API keys
+    if [ -f "$HOME/.alba/.env" ]; then
+        set -a; source "$HOME/.alba/.env" 2>/dev/null; set +a
+    fi
+
+    local failed=0
+    local checked=0
+    local dead_keys=""
+
+    # ElevenLabs
+    if [ -n "${ELEVENLABS_API_KEY:-}" ]; then
+        checked=$((checked + 1))
+        local el_status
+        el_status=$(curl -s -o /dev/null -w "%{http_code}" -m 5 \
+            -H "xi-api-key: $ELEVENLABS_API_KEY" \
+            https://api.elevenlabs.io/v1/user 2>/dev/null || echo "000")
+        if [ "$el_status" = "401" ] || [ "$el_status" = "403" ]; then
+            failed=$((failed + 1)); dead_keys="$dead_keys ElevenLabs($el_status)"
+        fi
+    fi
+
+    # Supabase
+    if [ -n "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+        checked=$((checked + 1))
+        local sb_status
+        sb_status=$(curl -s -o /dev/null -w "%{http_code}" -m 5 \
+            -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
+            https://api.supabase.com/v1/projects 2>/dev/null || echo "000")
+        if [ "$sb_status" = "401" ] || [ "$sb_status" = "403" ]; then
+            failed=$((failed + 1)); dead_keys="$dead_keys Supabase($sb_status)"
+        fi
+    fi
+
+    # Brave Search
+    if [ -n "${BRAVE_API_KEY:-}" ]; then
+        checked=$((checked + 1))
+        local br_status
+        br_status=$(curl -s -o /dev/null -w "%{http_code}" -m 5 \
+            -H "X-Subscription-Token: $BRAVE_API_KEY" \
+            "https://api.search.brave.com/res/v1/web/search?q=test&count=1" 2>/dev/null || echo "000")
+        if [ "$br_status" = "401" ] || [ "$br_status" = "403" ]; then
+            failed=$((failed + 1)); dead_keys="$dead_keys Brave($br_status)"
+        fi
+    fi
+
+    # GitHub
+    if [ -n "${GITHUB_TOKEN:-}" ]; then
+        checked=$((checked + 1))
+        local gh_status
+        gh_status=$(curl -s -o /dev/null -w "%{http_code}" -m 5 \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            https://api.github.com/user 2>/dev/null || echo "000")
+        if [ "$gh_status" = "401" ] || [ "$gh_status" = "403" ]; then
+            failed=$((failed + 1)); dead_keys="$dead_keys GitHub($gh_status)"
+        fi
+    fi
+
+    # Qonto
+    if [ -n "${QONTO_SLUG:-}" ] && [ -n "${QONTO_SECRET_KEY:-}" ]; then
+        checked=$((checked + 1))
+        local qt_status
+        qt_status=$(curl -s -o /dev/null -w "%{http_code}" -m 5 \
+            -H "Authorization: ${QONTO_SLUG}:${QONTO_SECRET_KEY}" \
+            https://thirdparty.qonto.com/v2/organization 2>/dev/null || echo "000")
+        if [ "$qt_status" = "401" ] || [ "$qt_status" = "403" ]; then
+            failed=$((failed + 1)); dead_keys="$dead_keys Qonto($qt_status)"
+        fi
+    fi
+
+    if [ "$failed" -gt 0 ]; then
+        _hb_log WARN "API keys DEAD:$dead_keys ($failed/$checked failed)"
+        return 1
+    fi
+
+    _hb_log INFO "API keys OK: $checked checked, 0 failed"
+    return 0
+}
+
 # ────────────────────────────────────────────────────────────
 # Dispatcher — maps check ID to handler
 # ────────────────────────────────────────────────────────────
@@ -196,6 +276,7 @@ dispatch_check() {
         goals)            handler_goals ;;
         telegram)         handler_telegram ;;
         email)            handler_email ;;
+        api-keys)         handler_api_keys ;;
         *)
             _hb_log WARN "Unknown check ID: $check_id"
             return 1

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -u
 # Alba — Daily tool registry update (midnight via cron)
 
 REGISTRY="$HOME/.alba/tool-registry.json"

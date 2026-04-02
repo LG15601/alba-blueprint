@@ -1,4 +1,5 @@
 #!/bin/bash
+set -u
 # Alba — Heartbeat check (runs every 15 min via cron)
 
 LOG="/tmp/alba-heartbeat.log"

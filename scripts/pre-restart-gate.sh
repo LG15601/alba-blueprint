@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -u
 # pre-restart-gate.sh — Check last CI run status before allowing Alba restart.
 # Exit 0 = allow restart. Exit 1 = block restart.
 # Fail-open: any error (no gh, no network, no runs) → allow restart (D005).

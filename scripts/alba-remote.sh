@@ -1,4 +1,5 @@
 #!/bin/bash
+set -u
 # Alba Remote Control
 # From MacBook: alba status / alba restart / alba logs
 # From iPhone Shortcuts: ssh alba@mac-mini-de-alba "bash ~/bin/alba-remote status"

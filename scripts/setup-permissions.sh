@@ -1,4 +1,5 @@
 #!/bin/bash
+set -u
 # Alba — macOS Permission Setup Guide
 # Run this to check and guide through required permissions
 

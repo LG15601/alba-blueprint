@@ -9,6 +9,7 @@
 set -u
 
 SCRIPT="scripts/start-alba.sh"
+ALERT_SCRIPT="scripts/alba-alert.sh"
 PASS=0
 FAIL=0
 TEST_NUM=0
@@ -36,15 +37,15 @@ else
     tap "FAIL" "bash -n syntax check passes"
 fi
 
-# ---- Test 2: send_alert function exists ----
-if grep -q 'send_alert()' "$SCRIPT"; then
+# ---- Test 2: send_alert function exists (in alba-alert.sh) ----
+if grep -q 'send_alert()' "$ALERT_SCRIPT"; then
     tap "ok" "send_alert function exists"
 else
     tap "FAIL" "send_alert function exists"
 fi
 
-# ---- Test 3: ALERT_COOLDOWN config exists ----
-if grep -q 'ALERT_COOLDOWN=' "$SCRIPT"; then
+# ---- Test 3: ALERT_COOLDOWN config exists (in alba-alert.sh) ----
+if grep -q 'ALERT_COOLDOWN=' "$ALERT_SCRIPT"; then
     tap "ok" "ALERT_COOLDOWN config defined"
 else
     tap "FAIL" "ALERT_COOLDOWN config defined"
@@ -88,15 +89,15 @@ else
     tap "FAIL" "rate-limit allows after cooldown expires (${elapsed}s >= ${COOLDOWN}s)"
 fi
 
-# ---- Test 7: Pushover curl command construction ----
-if grep -q 'api.pushover.net' "$SCRIPT"; then
+# ---- Test 7: Pushover curl command construction (in alba-alert.sh) ----
+if grep -q 'api.pushover.net' "$ALERT_SCRIPT"; then
     tap "ok" "Pushover curl posts to api.pushover.net"
 else
     tap "FAIL" "Pushover curl posts to api.pushover.net"
 fi
 
-# ---- Test 8: macOS notification command ----
-if grep -q 'osascript.*display notification' "$SCRIPT"; then
+# ---- Test 8: macOS notification command (in alba-alert.sh) ----
+if grep -q 'osascript.*display notification' "$ALERT_SCRIPT"; then
     tap "ok" "macOS notification via osascript display notification"
 else
     tap "FAIL" "macOS notification via osascript display notification"
@@ -109,11 +110,11 @@ else
     tap "FAIL" "auth expiry path calls send_alert"
 fi
 
-# ---- Test 10: ALERT: log prefix exists ----
-if grep -q 'ALERT:' "$SCRIPT"; then
-    tap "ok" "ALERT: log prefix present in script"
+# ---- Test 10: Alert uses alba_log for structured logging ----
+if grep -q 'alba_log' "$ALERT_SCRIPT"; then
+    tap "ok" "Alert library uses alba_log for structured logging"
 else
-    tap "FAIL" "ALERT: log prefix present in script"
+    tap "FAIL" "Alert library uses alba_log for structured logging"
 fi
 
 # ---- Summary ----

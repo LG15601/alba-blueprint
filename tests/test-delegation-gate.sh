@@ -14,8 +14,12 @@ trap 'rm -rf "$TMPDIR_BASE" /tmp/alba-delegation.lock' EXIT
 TEMP_CONFIG="$TMPDIR_BASE/config/delegation-limits.json"
 TEMP_STATE="$TMPDIR_BASE/state/delegation-state.json"
 TEMP_LOG="$TMPDIR_BASE/logs/delegation.log"
+TEMP_LOGS_DB="$TMPDIR_BASE/alba-logs-test.db"
 
 mkdir -p "$(dirname "$TEMP_CONFIG")" "$(dirname "$TEMP_STATE")" "$(dirname "$TEMP_LOG")"
+
+# Init logs table in test DB
+sqlite3 "$TEMP_LOGS_DB" "CREATE TABLE IF NOT EXISTS logs (id INTEGER PRIMARY KEY, timestamp TEXT, level TEXT, source TEXT, message TEXT, metadata TEXT);" 2>/dev/null
 
 # Default test config
 write_config() {
@@ -46,6 +50,7 @@ run_hook() {
         DELEGATION_CONFIG="$TEMP_CONFIG" \
         DELEGATION_STATE="$TEMP_STATE" \
         DELEGATION_LOG="$TEMP_LOG" \
+        ALBA_LOGS_DB="$TEMP_LOGS_DB" \
         bash "$HOOK" 2>/dev/null) || exit_code=$?
     echo "$output"
     return "$exit_code"
@@ -192,9 +197,10 @@ cat > "$TEMP_STATE" <<EOF
 ]}
 EOF
 rm -f "$TEMP_LOG"
+sqlite3 "$TEMP_LOGS_DB" "DELETE FROM logs;" 2>/dev/null
 run_hook '{"tool_name":"subagent","tool_input":{"agent":"worker"},"session_id":"sess-log"}' >/dev/null 2>&1 || true
-if [ -f "$TEMP_LOG" ] && grep -q "DENIED" "$TEMP_LOG"; then
-    pass "Denial logged to delegation.log"
+if sqlite3 "$TEMP_LOGS_DB" "SELECT COUNT(*) FROM logs WHERE message LIKE '%DENIED%';" 2>/dev/null | grep -qE '^[1-9]'; then
+    pass "Denial logged to alba-logs.db"
 else
     fail "Denial logged to delegation.log (log missing or no DENIED entry)"
 fi
@@ -227,6 +233,7 @@ OUTPUT=$(echo "" | \
     DELEGATION_CONFIG="$TEMP_CONFIG" \
     DELEGATION_STATE="$TEMP_STATE" \
     DELEGATION_LOG="$TEMP_LOG" \
+    ALBA_LOGS_DB="$TEMP_LOGS_DB" \
     bash "$HOOK" 2>/dev/null) && RC=$? || RC=$?
 if [ "$RC" -eq 0 ]; then
     pass "Fail-open on empty stdin"

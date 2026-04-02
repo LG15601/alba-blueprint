@@ -1,4 +1,5 @@
 #!/bin/bash
+set -u
 # Alba — Bidirectional memory sync with VPS
 # Runs every 30 minutes via cron
 
