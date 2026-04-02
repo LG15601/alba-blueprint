@@ -31,9 +31,14 @@ NUDGE_COUNT_FILE="/tmp/alba-nudge-count"
 ALERT_COOLDOWN=600            # seconds between repeated alerts of the same type
 ALERT_DIR="/tmp"              # directory for rate-limit timestamp files
 
+# ---- Shared structured logging ----
+SCRIPT_DIR_LOG="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR_LOG/alba-log.sh"
+
 # ---- Logging ----
 log() {
     local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+    alba_log INFO watchdog "$1"
     logger -t "$LOG_TAG" "$1" 2>/dev/null
     echo "$msg" >> "$LOG_FILE"
 }

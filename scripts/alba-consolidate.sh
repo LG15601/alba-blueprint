@@ -39,14 +39,15 @@ if [[ "${1:-}" == "--force" ]]; then
     FORCE=true
 fi
 
-# ── Helpers ──────────────────────────────────────────────────
+# ── Shared logging ───────────────────────────────────────────
+source "$(dirname "$0")/alba-log.sh"
+
 log() {
-    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $1"
-    echo "$msg" >> "$LOG_FILE"
+    alba_log INFO consolidation "$1"
 }
 
 die() {
-    log "ERROR: $1"
+    alba_log ERROR consolidation "$1"
     echo "ERROR: $1" >&2
     exit 1
 }

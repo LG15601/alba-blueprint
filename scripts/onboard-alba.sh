@@ -33,7 +33,10 @@ info() { echo -e "  ${BLUE}ℹ${NC}  $1"; }
 step() { echo -e "\n${CYAN}${BOLD}─── $1 ───${NC}"; }
 ask()  { echo -en "  ${BOLD}$1${NC} "; }
 
-log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $1" >> "$LOG_FILE"; }
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/alba-log.sh"
+
+log() { alba_log INFO onboarding "$1"; }
 
 banner() {
   echo ""

@@ -27,11 +27,12 @@ done
 
 # ── Logging ──────────────────────────────────────────────────
 mkdir -p "$LOG_DIR"
+source "$(dirname "$0")/alba-log.sh"
 
 log() {
+    alba_log INFO extract-skills "$1"
     local msg
     msg="[$(date -u '+%Y-%m-%dT%H:%M:%SZ')] $1"
-    echo "$msg" >> "$LOG_FILE"
     echo "$msg" >&2
 }
 

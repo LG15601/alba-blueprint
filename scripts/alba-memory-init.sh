@@ -66,3 +66,28 @@ for required_table in sessions observations session_summaries observations_fts m
 done
 
 echo "Alba memory database ready: $DB_PATH"
+
+# ── Initialize separate logs database ────────────────────────
+# alba-log.sh writes to a dedicated alba-logs.db (not alba-memory.db)
+# to avoid WAL contention with the memory pipeline.
+LOGS_DB_PATH="${ALBA_LOGS_DB:-$HOME/.alba/alba-logs.db}"
+if [[ ! -f "$LOGS_DB_PATH" ]] || ! sqlite3 "$LOGS_DB_PATH" "SELECT 1 FROM logs LIMIT 1;" >/dev/null 2>&1; then
+    sqlite3 "$LOGS_DB_PATH" <<'LOGSQL' > /dev/null
+PRAGMA journal_mode = WAL;
+CREATE TABLE IF NOT EXISTS logs (
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp TEXT NOT NULL,
+    level     TEXT NOT NULL,
+    source    TEXT NOT NULL,
+    component TEXT,
+    message   TEXT NOT NULL,
+    metadata  TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_logs_timestamp ON logs(timestamp);
+CREATE INDEX IF NOT EXISTS idx_logs_level ON logs(level);
+CREATE INDEX IF NOT EXISTS idx_logs_source ON logs(source);
+LOGSQL
+    echo "Logs database ready: $LOGS_DB_PATH"
+else
+    echo "Logs database already initialized: $LOGS_DB_PATH"
+fi
