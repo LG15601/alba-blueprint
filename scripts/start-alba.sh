@@ -34,6 +34,7 @@ ALERT_DIR="/tmp"              # directory for rate-limit timestamp files
 # ---- Shared structured logging ----
 SCRIPT_DIR_LOG="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR_LOG/alba-log.sh"
+source "$SCRIPT_DIR_LOG/alba-alert.sh"
 
 # ---- Logging ----
 log() {
@@ -181,43 +182,6 @@ nudge_if_idle() {
         return 0
     fi
     return 1
-}
-
-# ---- Alert: Pushover + macOS notification with rate limiting ----
-send_alert() {
-    local alert_type="$1"
-    local message="$2"
-    local stamp_file="${ALERT_DIR}/alba-last-alert-${alert_type}"
-
-    # Rate limiting: skip if last alert of this type was within cooldown
-    if [ -f "$stamp_file" ]; then
-        local last_sent now elapsed
-        last_sent=$(cat "$stamp_file" 2>/dev/null || echo "0")
-        now=$(date +%s)
-        elapsed=$((now - last_sent))
-        if [ "$elapsed" -lt "$ALERT_COOLDOWN" ]; then
-            log "ALERT: suppressed (${alert_type}) — cooldown active (${elapsed}s < ${ALERT_COOLDOWN}s)"
-            return 0
-        fi
-    fi
-
-    # Pushover (primary channel)
-    if [ -n "${PUSHOVER_USER_KEY:-}" ] && [ -n "${PUSHOVER_API_TOKEN:-}" ]; then
-        curl -s --max-time 10 -X POST https://api.pushover.net/1/messages.json \
-            -d "token=${PUSHOVER_API_TOKEN}" \
-            -d "user=${PUSHOVER_USER_KEY}" \
-            -d "title=Alba Alert" \
-            -d "message=${message}" \
-            -d "priority=1" 2>/dev/null || true
-        log "ALERT: sent via pushover (${alert_type})"
-    fi
-
-    # macOS notification (always attempted as fallback)
-    osascript -e "display notification \"${message}\" with title \"Alba Alert\"" 2>/dev/null || true
-    log "ALERT: sent via macos-notification (${alert_type})"
-
-    # Update timestamp for rate limiting
-    date +%s > "$stamp_file"
 }
 
 # ---- Preflight checks ----
