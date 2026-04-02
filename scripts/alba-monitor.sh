@@ -137,6 +137,24 @@ check_process() {
     fi
 }
 
+check_context_pressure() {
+    local counter_file="${COUNTER_FILE:-/tmp/alba-tool-counter}"
+    local count=0
+    if [ -f "$counter_file" ]; then
+        count=$(cat "$counter_file" 2>/dev/null || echo 0)
+        # Sanitize to integer
+        count=$((count + 0)) 2>/dev/null || count=0
+    fi
+
+    if [ "$count" -ge 100 ]; then
+        echo "critical $count"
+    elif [ "$count" -ge 50 ]; then
+        echo "warning $count"
+    else
+        echo "ok $count"
+    fi
+}
+
 # ---- Escalation tracking ----
 
 track_escalation() {
@@ -197,7 +215,7 @@ run_check() {
 # ---- Main ----
 
 main() {
-    local checks=("memory" "disk" "db_size" "error_rate" "process")
+    local checks=("memory" "disk" "db_size" "error_rate" "process" "context_pressure")
     local single_check=""
 
     # Parse args

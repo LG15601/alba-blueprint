@@ -99,6 +99,17 @@
           }
         ]
       }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.alba/hooks/pre-compact.sh",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "permissions": {

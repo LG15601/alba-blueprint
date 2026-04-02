@@ -161,6 +161,26 @@ render_error_rate() {
     printf "%s errors (5min)\n" "$count"
 }
 
+render_context_pressure() {
+    local counter_file="${COUNTER_FILE:-/tmp/alba-tool-counter}"
+    local count=0
+    if [ -f "$counter_file" ]; then
+        count=$(cat "$counter_file" 2>/dev/null || echo 0)
+        count=$((count + 0)) 2>/dev/null || count=0
+    fi
+
+    local status="ok"
+    if [ "$count" -ge 100 ]; then
+        status="critical"
+    elif [ "$count" -ge 50 ]; then
+        status="warning"
+    fi
+
+    printf "  Context Pressure:"
+    status_icon "$status"
+    printf "%s tool calls\n" "$count"
+}
+
 render_escalations() {
     local active=0
     local details=""
@@ -220,6 +240,7 @@ render_dashboard() {
     render_db "$ALBA_LOGS_DB"   "Logs DB"   100 500
     render_db "$ALBA_MEMORY_DB" "Memory DB" 200 1024
     render_error_rate
+    render_context_pressure
     render_escalations
     render_recent_alerts
 
