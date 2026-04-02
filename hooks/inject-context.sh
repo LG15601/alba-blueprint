@@ -194,6 +194,41 @@ ${o_narrative}
     done <<< "$full_obs"
 fi
 
+# ── Section: Recent Learnings ─────────────────────────────────
+# Only include if learnings table exists and has rows
+has_learnings=$(sqlite3 "$DB_PATH" ".tables" 2>/dev/null | grep -c 'learnings' || echo "0")
+if [ "$has_learnings" -gt 0 ]; then
+    learnings_count=$(sqlite3 "$DB_PATH" "SELECT COUNT(*) FROM learnings;" 2>/dev/null || echo "0")
+    if [ "$learnings_count" -gt 0 ] 2>/dev/null; then
+        learnings_rows=$(sqlite3 -separator '|||' "$DB_PATH" "
+            SELECT content, COALESCE(category, 'general'), created_at
+            FROM learnings
+            ORDER BY created_at DESC
+            LIMIT 10;
+        " 2>/dev/null || echo "")
+
+        if [ -n "$learnings_rows" ]; then
+            ctx="${ctx}
+### Recent Learnings
+"
+            while IFS= read -r row; do
+                [ -z "$row" ] && continue
+                l_content=$(echo "$row" | awk -F'\\|\\|\\|' '{print $1}')
+                l_category=$(echo "$row" | awk -F'\\|\\|\\|' '{print $2}')
+                l_created=$(echo "$row" | awk -F'\\|\\|\\|' '{print $3}')
+
+                # Truncate long learnings for context budget
+                if [ ${#l_content} -gt 200 ]; then
+                    l_content="${l_content:0:197}..."
+                fi
+
+                ctx="${ctx}- [${l_category}] ${l_content}
+"
+            done <<< "$learnings_rows"
+        fi
+    fi
+fi
+
 # ── Empty DB fallback ────────────────────────────────────────
 if [ "$total_in_db" -eq 0 ] 2>/dev/null; then
     ctx="## Recent Memory (frozen snapshot)
