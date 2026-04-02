@@ -139,6 +139,36 @@ handler_memory_db() {
     return 0
 }
 
+handler_goals() {
+    # Check for blocked or overdue goals in the goals table
+    # Gracefully handle missing table (migration may not be applied yet)
+    local table_exists
+    table_exists=$(/usr/bin/sqlite3 "$ALBA_MEMORY_DB" \
+        "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='goals';" 2>/dev/null || echo "0")
+
+    if [ "$table_exists" != "1" ]; then
+        _hb_log INFO "Goals table not found — migration 007 may not be applied yet"
+        return 0
+    fi
+
+    local blocked overdue today
+    today=$(date +%Y-%m-%d)
+
+    blocked=$(/usr/bin/sqlite3 "$ALBA_MEMORY_DB" \
+        "SELECT COUNT(*) FROM goals WHERE status = 'blocked';" 2>/dev/null || echo "0")
+
+    overdue=$(/usr/bin/sqlite3 "$ALBA_MEMORY_DB" \
+        "SELECT COUNT(*) FROM goals WHERE status = 'active' AND target_date IS NOT NULL AND target_date < '$today';" 2>/dev/null || echo "0")
+
+    if [ "$blocked" -gt 0 ] || [ "$overdue" -gt 0 ]; then
+        _hb_log WARN "Goals: $blocked blocked, $overdue overdue"
+        return 1
+    fi
+
+    _hb_log INFO "Goals OK: 0 blocked, 0 overdue"
+    return 0
+}
+
 handler_telegram() {
     _hb_log INFO "Telegram check: TODO stub — not yet wired"
     return 0
@@ -163,6 +193,7 @@ dispatch_check() {
         tmux-session)     handler_tmux_session ;;
         standing-orders)  handler_standing_orders ;;
         memory-db)        handler_memory_db ;;
+        goals)            handler_goals ;;
         telegram)         handler_telegram ;;
         email)            handler_email ;;
         *)
