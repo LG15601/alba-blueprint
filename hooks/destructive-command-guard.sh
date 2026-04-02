@@ -17,6 +17,10 @@ if [ -z "$COMMAND" ]; then
   exit 0
 fi
 
+# Normalize: strip surrounding quotes from arguments for pattern matching
+# e.g. rm -rf "/" → rm -rf /  (so block patterns match quoted dangerous paths)
+COMMAND=$(echo "$COMMAND" | sed -E 's/([[:space:]])["\x27]([^"\x27]+)["\x27]/\1\2/g')
+
 # --- Load config (fall back to hardcoded if missing/broken) ---
 BLOCK_PATTERNS=()
 BLOCK_IDS=()
