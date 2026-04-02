@@ -81,10 +81,10 @@ fi
 # 4. Migration version tracking works
 # ─────────────────────────────────────────────────────────────
 schema_version=$(sqlite3 "$TEST_DB" "SELECT value FROM meta WHERE key = 'schema_version';")
-if [ "$schema_version" = "1" ]; then
-    ok "Migration version is 1 after initial migration"
+if [ "$schema_version" = "4" ]; then
+    ok "Migration version is 4 after all migrations"
 else
-    not_ok "Migration version is 1 after initial migration" "got: $schema_version"
+    not_ok "Migration version is 4 after all migrations" "got: $schema_version"
 fi
 
 # ─────────────────────────────────────────────────────────────
