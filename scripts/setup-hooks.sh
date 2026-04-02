@@ -5,7 +5,8 @@
 # Idempotently adds hook entries for the operational learning pipeline:
 #   PostToolUse  → capture-observation.sh
 #   SessionStart → inject-context.sh
-#   Stop         → capture-session-summary.sh, extract-learnings.sh
+#   Stop         → capture-session-summary.sh, extract-learnings.sh,
+#                  promote-patterns-hook.sh, extract-skills-hook.sh
 #
 # Uses jq to merge — never overwrites existing entries.
 
@@ -123,6 +124,19 @@ else
     if ! $DRY_RUN; then
         settings=$(echo "$settings" | jq \
             --arg cmd "$PROMOTE_CMD" \
+            '.hooks.Stop[0].hooks += [{"type": "command", "command": $cmd, "timeout": 30}]')
+    fi
+fi
+
+# ── Stop: extract-skills-hook.sh (after promote-patterns) ────
+SKILLS_CMD="bash ~/.alba/hooks/extract-skills-hook.sh"
+if hook_exists "Stop" "$SKILLS_CMD"; then
+    echo "✓ Stop: extract-skills-hook.sh already registered"
+else
+    changes+=("Stop: extract-skills-hook.sh")
+    if ! $DRY_RUN; then
+        settings=$(echo "$settings" | jq \
+            --arg cmd "$SKILLS_CMD" \
             '.hooks.Stop[0].hooks += [{"type": "command", "command": $cmd, "timeout": 30}]')
     fi
 fi
