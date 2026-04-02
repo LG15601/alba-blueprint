@@ -1,0 +1,45 @@
+{
+  "_doc": "Trust matrix for skills_guard.py — maps path globs to lists of allowed pattern_ids that are known false positives for those skills.",
+  "rules": [
+    {
+      "glob": "skills/nightly-routine/*",
+      "allow": ["destructive_rm_root"],
+      "reason": "Cleanup commands reference rm -rf / patterns in documentation"
+    },
+    {
+      "glob": "skills/health-check/*",
+      "allow": ["macos_launchd"],
+      "reason": "Health check monitors launchd services as part of its function"
+    },
+    {
+      "glob": "skills/health-check/scripts/*",
+      "allow": ["macos_launchd"],
+      "reason": "Health check scripts inspect launchd state"
+    },
+    {
+      "glob": "skills/morning-brief/*",
+      "allow": ["macos_launchd"],
+      "reason": "Morning brief references launchd for scheduling context"
+    },
+    {
+      "glob": "skills/tool-discover/*",
+      "allow": ["unpinned_npm_install", "unpinned_pip_install"],
+      "reason": "Tool discovery documents install commands without pinning"
+    },
+    {
+      "glob": "skills/army/*",
+      "allow": ["echo_pipe_exec"],
+      "reason": "Retro skill documents shell pipeline patterns"
+    },
+    {
+      "glob": "skills/veille/scripts/*",
+      "allow": ["md_link_exfil"],
+      "reason": "Veille watcher builds markdown links with dynamic URLs"
+    },
+    {
+      "glob": "skills/inbox-zero/scripts/*",
+      "allow": ["echo_pipe_exec"],
+      "reason": "Email classifier pipes output through processing commands"
+    }
+  ]
+}
