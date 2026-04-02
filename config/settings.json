@@ -45,6 +45,16 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.alba/hooks/delegation-cleanup.sh",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "PreToolUse": [
@@ -54,6 +64,27 @@
           {
             "type": "command",
             "command": "bash ~/.alba/hooks/destructive-command-guard.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.alba/hooks/delegation-gate.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.alba/hooks/delegation-cleanup.sh",
             "timeout": 5
           }
         ]
