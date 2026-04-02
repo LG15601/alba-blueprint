@@ -1,0 +1,26 @@
+{
+  "type": "completion",
+  "description": "Task completion report — subagent finished work and routes results back",
+  "required": ["type", "task_id", "summary", "artifacts_produced", "learnings", "next_steps", "timestamp"],
+  "properties": {
+    "type": { "type": "string", "const": "completion" },
+    "task_id": { "type": "string", "description": "Task identifier that was completed" },
+    "summary": { "type": "string", "description": "Brief summary of what was accomplished" },
+    "artifacts_produced": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of files or artifacts created or modified"
+    },
+    "learnings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Insights or patterns discovered during execution"
+    },
+    "next_steps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Recommended follow-up actions"
+    },
+    "timestamp": { "type": "string", "format": "date-time", "description": "ISO 8601 timestamp" }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "escalation",
+  "description": "Escalation after max retries exhausted — requires human or senior agent intervention",
+  "required": ["type", "task_id", "failure_history", "root_cause_analysis", "recommended_resolution", "impact_assessment", "retry_count", "timestamp"],
+  "properties": {
+    "type": { "type": "string", "const": "escalation" },
+    "task_id": { "type": "string", "description": "Task identifier being escalated" },
+    "failure_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "attempt": { "type": "integer" },
+          "issue_summary": { "type": "string" },
+          "fix_attempted": { "type": "string" }
+        },
+        "required": ["attempt", "issue_summary", "fix_attempted"]
+      },
+      "description": "Summary of each failed QA attempt"
+    },
+    "root_cause_analysis": { "type": "string", "description": "Analysis of why repeated fixes failed" },
+    "recommended_resolution": { "type": "string", "description": "Suggested path forward" },
+    "impact_assessment": { "type": "string", "description": "Impact of the unresolved issue on the project" },
+    "retry_count": { "type": "integer", "minimum": 0, "description": "Total retry attempts before escalation" },
+    "timestamp": { "type": "string", "format": "date-time", "description": "ISO 8601 timestamp" }
+  }
+}

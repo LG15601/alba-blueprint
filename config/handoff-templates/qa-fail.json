@@ -1,0 +1,26 @@
+{
+  "type": "qa-fail",
+  "description": "QA verification failed — issues found requiring fixes",
+  "required": ["type", "task_id", "issue_list", "fix_instructions", "retry_count", "timestamp"],
+  "properties": {
+    "type": { "type": "string", "const": "qa-fail" },
+    "task_id": { "type": "string", "description": "Task identifier that failed verification" },
+    "issue_list": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": { "type": "string", "enum": ["critical", "major", "minor"] },
+          "expected": { "type": "string" },
+          "actual": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["severity", "expected", "actual", "description"]
+      },
+      "description": "List of issues found during QA"
+    },
+    "fix_instructions": { "type": "string", "description": "Instructions for the dev agent to fix the issues" },
+    "retry_count": { "type": "integer", "minimum": 0, "description": "Number of retry attempts so far" },
+    "timestamp": { "type": "string", "format": "date-time", "description": "ISO 8601 timestamp" }
+  }
+}

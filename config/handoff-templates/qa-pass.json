@@ -1,0 +1,24 @@
+{
+  "type": "qa-pass",
+  "description": "QA verification passed — all checks met",
+  "required": ["type", "task_id", "evidence", "verification_checklist", "all_passed", "timestamp"],
+  "properties": {
+    "type": { "type": "string", "const": "qa-pass" },
+    "task_id": { "type": "string", "description": "Task identifier that was verified" },
+    "evidence": { "type": "array", "items": { "type": "string" }, "description": "Evidence artifacts supporting the pass verdict" },
+    "verification_checklist": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item": { "type": "string" },
+          "passed": { "type": "boolean" }
+        },
+        "required": ["item", "passed"]
+      },
+      "description": "Checklist of verification items with pass/fail status"
+    },
+    "all_passed": { "type": "boolean", "description": "True only when every checklist item passed" },
+    "timestamp": { "type": "string", "format": "date-time", "description": "ISO 8601 timestamp" }
+  }
+}

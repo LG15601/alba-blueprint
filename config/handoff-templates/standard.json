@@ -1,0 +1,14 @@
+{
+  "type": "standard",
+  "description": "Standard agent-to-agent handoff document",
+  "required": ["type", "from_agent", "to_agent", "context", "deliverable_request", "acceptance_criteria", "timestamp"],
+  "properties": {
+    "type": { "type": "string", "const": "standard" },
+    "from_agent": { "type": "string", "description": "Agent ID initiating the handoff" },
+    "to_agent": { "type": "string", "description": "Agent ID receiving the handoff" },
+    "context": { "type": "string", "description": "Background and relevant state for the receiving agent" },
+    "deliverable_request": { "type": "string", "description": "What the receiving agent must produce" },
+    "acceptance_criteria": { "type": "array", "items": { "type": "string" }, "description": "Criteria the deliverable must meet" },
+    "timestamp": { "type": "string", "format": "date-time", "description": "ISO 8601 timestamp" }
+  }
+}

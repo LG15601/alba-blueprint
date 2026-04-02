@@ -13,5 +13,10 @@
     "cron": { "maxConcurrent": 2 },
     "subagent": { "maxConcurrent": 2 },
     "nested": { "maxConcurrent": 1 }
+  },
+  "handoff": {
+    "maxRetries": 3,
+    "escalationPolicy": "auto",
+    "handoffDir": "~/.alba/handoffs"
   }
 }
