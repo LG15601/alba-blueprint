@@ -1,0 +1,223 @@
+#!/usr/bin/env bash
+# alba-heartbeat-proactive.sh — Proactive heartbeat runner
+#
+# Evaluates HEARTBEAT.md checklist: parses check IDs, dispatches each
+# to a handler function, logs aggregate results to SQLite.
+#
+# All checks are pure shell — zero LLM cost on idle.
+#
+# Usage:
+#   bash scripts/alba-heartbeat-proactive.sh                         # default checklist
+#   bash scripts/alba-heartbeat-proactive.sh --heartbeat-file /path  # custom checklist
+#
+# Environment:
+#   ALBA_LOGS_DB        — logs database (default: ~/.alba/alba-logs.db)
+#   ALBA_MEMORY_DB      — memory database (default: ~/.alba/alba-memory.db)
+#   HEARTBEAT_FILE      — checklist path (default: ~/.alba/HEARTBEAT.md)
+
+set -euo pipefail
+
+# ── Cron-compatible PATH ─────────────────────────────────────
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+export HOME="${HOME:-$(eval echo ~)}"
+
+# ── Source shared libraries ──────────────────────────────────
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/alba-log.sh"
+
+if [ -f "$SCRIPT_DIR/alba-alert.sh" ]; then
+    source "$SCRIPT_DIR/alba-alert.sh"
+fi
+
+# ── Configuration ────────────────────────────────────────────
+ALBA_LOGS_DB="${ALBA_LOGS_DB:-$HOME/.alba/alba-logs.db}"
+ALBA_MEMORY_DB="${ALBA_MEMORY_DB:-$HOME/.alba/alba-memory.db}"
+HEARTBEAT_FILE="${HEARTBEAT_FILE:-$HOME/.alba/HEARTBEAT.md}"
+
+# ── Parse CLI args ───────────────────────────────────────────
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --heartbeat-file) HEARTBEAT_FILE="$2"; shift 2 ;;
+        *) shift ;;
+    esac
+done
+
+# ── Logging helper (never stdout) ────────────────────────────
+_hb_log() {
+    alba_log "$1" heartbeat "$2" "${3:-}" 2>/dev/null || true
+}
+
+# ────────────────────────────────────────────────────────────
+# Check handlers
+# Each returns 0 on pass, 1 on triggered (problem found).
+# MUST NOT write to stdout (subshell capture contamination).
+# Status details go to stderr or structured log only.
+# ────────────────────────────────────────────────────────────
+
+handler_disk() {
+    local pct
+    pct=$(df / | awk 'NR==2 {gsub(/%/,""); print $5}')
+    if [ "$pct" -ge 90 ]; then
+        _hb_log WARN "Disk usage at ${pct}%"
+        return 1
+    fi
+    _hb_log INFO "Disk OK: ${pct}%"
+    return 0
+}
+
+handler_ram() {
+    local pid rss_mb
+    pid=$(pgrep -f 'claude.*--dangerously-skip-permissions' 2>/dev/null | head -1 || true)
+    if [ -z "$pid" ]; then
+        _hb_log INFO "RAM check: no Claude process — skipping"
+        return 0
+    fi
+    rss_mb=$(ps -o rss= -p "$pid" 2>/dev/null | awk '{print int($1/1024)}')
+    rss_mb="${rss_mb:-0}"
+    if [ "$rss_mb" -gt 5500 ]; then
+        _hb_log WARN "Claude RSS high: ${rss_mb}MB"
+        return 1
+    fi
+    _hb_log INFO "RAM OK: Claude RSS ${rss_mb}MB"
+    return 0
+}
+
+handler_alba_process() {
+    local pid
+    pid=$(pgrep -f 'claude.*--dangerously-skip-permissions' 2>/dev/null | head -1 || true)
+    if [ -z "$pid" ]; then
+        _hb_log WARN "Alba process not found"
+        return 1
+    fi
+    _hb_log INFO "Alba process running (pid: $pid)"
+    return 0
+}
+
+handler_tmux_session() {
+    if command -v tmux >/dev/null 2>&1 && tmux has-session -t alba 2>/dev/null; then
+        _hb_log INFO "tmux session 'alba' alive"
+        return 0
+    fi
+    _hb_log WARN "tmux session 'alba' not found"
+    return 1
+}
+
+handler_standing_orders() {
+    if [ ! -f "$SCRIPT_DIR/alba-standing-orders.sh" ]; then
+        _hb_log WARN "Standing orders script not found"
+        return 1
+    fi
+
+    local output
+    output=$(ALBA_MEMORY_DB="$ALBA_MEMORY_DB" bash "$SCRIPT_DIR/alba-standing-orders.sh" --check 2>/dev/null) || {
+        _hb_log WARN "Standing orders --check failed"
+        return 1
+    }
+
+    # Count due orders from output
+    local due_count
+    due_count=$(echo "$output" | grep -c '^DUE:' || true)
+
+    if [ "$due_count" -gt 0 ]; then
+        _hb_log INFO "Standing orders: $due_count due"
+    else
+        _hb_log INFO "Standing orders: none due"
+    fi
+    return 0
+}
+
+handler_memory_db() {
+    if [ ! -f "$ALBA_MEMORY_DB" ]; then
+        _hb_log WARN "Memory DB not found: $ALBA_MEMORY_DB"
+        return 1
+    fi
+    if ! /usr/bin/sqlite3 "$ALBA_MEMORY_DB" "SELECT 1;" >/dev/null 2>&1; then
+        _hb_log WARN "Memory DB unreadable: $ALBA_MEMORY_DB"
+        return 1
+    fi
+    _hb_log INFO "Memory DB OK"
+    return 0
+}
+
+handler_telegram() {
+    _hb_log INFO "Telegram check: TODO stub — not yet wired"
+    return 0
+}
+
+handler_email() {
+    _hb_log INFO "Email check: TODO stub — not yet wired"
+    return 0
+}
+
+# ────────────────────────────────────────────────────────────
+# Dispatcher — maps check ID to handler
+# ────────────────────────────────────────────────────────────
+
+dispatch_check() {
+    local check_id="$1"
+
+    case "$check_id" in
+        disk)             handler_disk ;;
+        ram)              handler_ram ;;
+        alba-process)     handler_alba_process ;;
+        tmux-session)     handler_tmux_session ;;
+        standing-orders)  handler_standing_orders ;;
+        memory-db)        handler_memory_db ;;
+        telegram)         handler_telegram ;;
+        email)            handler_email ;;
+        *)
+            _hb_log WARN "Unknown check ID: $check_id"
+            return 1
+            ;;
+    esac
+}
+
+# ────────────────────────────────────────────────────────────
+# Main
+# ────────────────────────────────────────────────────────────
+
+main() {
+    if [ ! -f "$HEARTBEAT_FILE" ]; then
+        echo "ERROR: Heartbeat file not found: $HEARTBEAT_FILE" >&2
+        exit 1
+    fi
+
+    _hb_log INFO "Heartbeat starting — file: $HEARTBEAT_FILE"
+
+    local total=0
+    local passed=0
+    local triggered=0
+
+    # Parse check IDs from HEARTBEAT.md
+    # Match lines like "- [ ] [check-id] Description"
+    local check_ids
+    check_ids=$(grep -oE '\[([a-z][a-z0-9-]*)\]' "$HEARTBEAT_FILE" | \
+                grep -v '^\[ \]$' | \
+                grep -v '^\[x\]$' | \
+                sed 's/\[//g; s/\]//g' | \
+                sort -u)
+
+    if [ -z "$check_ids" ]; then
+        _hb_log WARN "No check IDs found in $HEARTBEAT_FILE"
+        echo "No check IDs found in heartbeat file."
+        exit 0
+    fi
+
+    while IFS= read -r check_id; do
+        [ -z "$check_id" ] && continue
+        total=$((total + 1))
+
+        if dispatch_check "$check_id"; then
+            passed=$((passed + 1))
+        else
+            triggered=$((triggered + 1))
+        fi
+    done <<< "$check_ids"
+
+    _hb_log INFO "Heartbeat complete: $passed/$total passed, $triggered triggered" \
+        "{\"passed\":$passed,\"triggered\":$triggered,\"total\":$total}"
+
+    echo "Heartbeat: $passed/$total passed, $triggered triggered"
+}
+
+main
