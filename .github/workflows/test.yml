@@ -1,0 +1,16 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run TAP test suites
+        shell: bash --noprofile --norc -o pipefail {0}
+        run: bash run-tests.sh
