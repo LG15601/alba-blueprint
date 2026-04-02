@@ -22,10 +22,36 @@ source "$SCRIPT_DIR/../scripts/alba-log.sh"
 DB_PATH="${ALBA_MEMORY_DB:-$HOME/.alba/alba-memory.db}"
 OUTPUT_FILE="${ALBA_SESSION_CONTEXT:-$HOME/.alba/session-context.md}"
 
-TOTAL_OBSERVATION_COUNT=30
-FULL_OBSERVATION_COUNT=5
-SESSION_COUNT=3
-MAX_CHARS=16000
+# ── Pressure-aware budget scaling ─────────────────────────────
+# Read tool call counter to determine context pressure tier.
+# Higher pressure → smaller context injection to reduce compaction risk.
+# This only affects *next* session start (frozen snapshot semantics).
+_COUNTER_FILE="${COUNTER_FILE:-/tmp/alba-tool-counter}"
+_tool_count=0
+if [ -f "$_COUNTER_FILE" ]; then
+    _tool_count=$(cat "$_COUNTER_FILE" 2>/dev/null || echo 0)
+    _tool_count=$((_tool_count + 0)) 2>/dev/null || _tool_count=0
+fi
+
+if [ "$_tool_count" -ge 100 ]; then
+    # Minimal budget — context is critically large
+    MAX_CHARS=6000
+    SESSION_COUNT=1
+    FULL_OBSERVATION_COUNT=2
+    TOTAL_OBSERVATION_COUNT=8
+elif [ "$_tool_count" -ge 50 ]; then
+    # Reduced budget — context pressure building
+    MAX_CHARS=10000
+    SESSION_COUNT=2
+    FULL_OBSERVATION_COUNT=3
+    TOTAL_OBSERVATION_COUNT=15
+else
+    # Full budget — context is healthy
+    MAX_CHARS=16000
+    SESSION_COUNT=3
+    FULL_OBSERVATION_COUNT=5
+    TOTAL_OBSERVATION_COUNT=30
+fi
 
 START_TS=$(date +%s)
 
