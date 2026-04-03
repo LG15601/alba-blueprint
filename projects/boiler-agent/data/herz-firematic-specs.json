@@ -1,0 +1,95 @@
+{
+  "manufacturer": "HERZ Energietechnik GmbH",
+  "address": "Herzstraße 1, 7423 Pinkafeld, Österreich/Austria",
+  "phone": "+43 (0) 3357 / 42840",
+  "service_hotline_at": "+43 3357 / 42840 - 840",
+  "service_hotline_de": "+49 9176 / 36795 - 0",
+  "email": "office-energie@herz.eu",
+  "website": "https://www.herz-energie.at",
+  "french_distributor": "SB Thermique — https://sbthermique.fr/",
+  "model": {
+    "name": "Firematic 130",
+    "type": "firematic 130",
+    "serial": "17350000047F016901A3",
+    "year": 2017,
+    "controller": "T-CONTROL",
+    "combustible_1": {
+      "type": "Bois déchiqueté",
+      "norme": "D45A/M30 EN 17225-4",
+      "puissance_min_kw": 36.7,
+      "puissance_nominale_kw": 130.0,
+      "puissance_calorifique_nominale_kw": 135.8
+    },
+    "combustible_2": {
+      "type": "Granulés",
+      "norme": "A1 EN 17225-2, ENplus, DINplus, SwissPellets",
+      "puissance_min_kw": 35.9,
+      "puissance_nominale_kw": 130.0,
+      "puissance_calorifique_nominale_kw": 148.1
+    },
+    "classe_chaudiere": 5,
+    "classe_combustible": "B1 / C1",
+    "contenance_eau_litres": 228.0,
+    "pression_service_bar": 5.0,
+    "temperature_service_celsius": 95.0,
+    "raccordement_electrique": "1/N/PE 230V/50Hz/16A",
+    "puissance_electrique_max_w": 2800,
+    "puissance_electrique_nominale_w": 170,
+    "ballon_tampon": "Recommandé (min 1500L)",
+    "poids_kg": 1370,
+    "rendement_pellets": "90.9%",
+    "rendement_bois": "90.9%",
+    "temp_fumees_celsius": "160-170",
+    "tirage_cheminee_pa": "5-10"
+  },
+  "spare_parts_sources": [
+    {
+      "name": "BiomassSparesOnline (UK)",
+      "url": "https://biomasssparesonline.co.uk/collections/herz/firematic",
+      "exploded_drawings": "https://biomasssparesonline.co.uk/pages/exploded-drawings-for-herz-firematic-130-201-electrical"
+    },
+    {
+      "name": "The Biomass Hut (UK)",
+      "url": "https://www.thebiomasshut.co.uk/herz-biomass-spare-parts/firematic-130-201-kw-spares/"
+    }
+  ],
+  "documentation": [
+    {
+      "name": "Fiche technique Firematic 130-301",
+      "url": "https://herzmediaserver.com/data/_www/srb/tehnicki_listovi/kotlovi/normblatt_firematic_130-300_v_1.3.pdf"
+    },
+    {
+      "name": "Manuel technique Pelletstar/Firematic Condensation (FR)",
+      "url": "https://sbthermique.fr/wp-content/uploads/2022/06/Manuel-technique-Pelletstar-10-101-Condensation-Firematic-30-40-CONDENSATION_V1.1.pdf"
+    },
+    {
+      "name": "BioMatic BioControl 3000 Operating Instructions (EN)",
+      "url": "https://f.hubspotusercontent-eu1.net/hubfs/24902330/Resource%20centre%20files/Biomass%20Product%20info/Operating%20instructions/02.05.006%20Operating%20Instructions%20-%20BM%20220-500kW.pdf"
+    },
+    {
+      "name": "Firematic 149 Betriebsanleitung (DE)",
+      "url": "https://www.manualslib.de/manual/111737/Herz-Firematic-149.html"
+    },
+    {
+      "name": "T-CONTROL Operating Instructions (EN)",
+      "url": "https://www.manualslib.com/manual/1278380/Herz-T-Control.html"
+    }
+  ],
+  "key_parts": {
+    "moteur_grille_basculante": {"ref": "SP.00.00174 / 3030000-004", "name": "DAG 6502 5tr/min"},
+    "moteur_grille_poussante": {"ref": "SP.00.00148", "name": "DAG-6502 3tr/min"},
+    "moteur_vis_alimentation": {"ref": "SP.00.00300 / 3030076-039", "name": "0.37kW 30mm"},
+    "ventilateur_id": {"ref": "SP.00.00138 / 5012305-573", "name": "R2E 250-XX03-XP FM199"},
+    "soufflante_allumage": {"ref": "SP.00.00957 / 5011000-547", "name": "Leister 1600W"},
+    "actionneur_air_secondaire": {"ref": "5010240-204", "name": "Belimo LM 24-SR-F"},
+    "terminal_biocontrol": {"ref": "SP.00.00232 / HE50256-100", "name": "HZS 113"},
+    "ecran_tcontrol": {"ref": "SP.00.00192 / HE50256-106", "name": "HZS 555"},
+    "carte_puissance_tcontrol": {"ref": "SP.00.00140", "name": "HZS 523"},
+    "thermostat_stb": {"ref": "SP.00.00289", "name": "Limiteur sécurité thermique"},
+    "sonde_pt1000": {"ref": "SP.00.00142", "name": "PT1000 TF25.200.03 +100°C"},
+    "sonde_combustion": {"ref": "SP.00.00146", "name": "PS10-60 FM45-201"},
+    "sonde_fumees": {"ref": "SP.00.00175", "name": "Température 400°C"},
+    "contacteur_fin_course": {"ref": "SP.00.01051", "name": "Panneau frontal E200"},
+    "sectionneur_principal": {"ref": "SP.00.01050", "name": "25A, 3 phases"}
+  }
+}

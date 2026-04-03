@@ -299,9 +299,13 @@ check_auth_status() {
 
     if [ "$logged_in" = "False" ]; then
         log "AUTH EXPIRED: Claude CLI reports loggedIn=false"
-        echo "$(date '+%Y-%m-%d %H:%M:%S') Claude auth expired (proactive check)" > /tmp/alba-auth-expired
-        send_alert "auth" "Claude auth token expired — run 'claude login' on Mac Mini"
-        alba_log CRITICAL watchdog "Claude auth token expired — loggedIn=false"
+        if [ ! -f /tmp/alba-auth-expired ]; then
+            echo "$(date '+%Y-%m-%d %H:%M:%S') Claude auth expired (proactive check)" > /tmp/alba-auth-expired
+            send_alert "auth" "Claude auth token expired — run 'claude login' on Mac Mini"
+            alba_log CRITICAL watchdog "Claude auth token expired — loggedIn=false"
+        else
+            log "Auth still expired (alert already sent, suppressing duplicate)"
+        fi
     else
         rm -f /tmp/alba-auth-expired 2>/dev/null
     fi
@@ -337,8 +341,12 @@ is_healthy() {
     if echo "$pane" | grep -q "OAuth token has expired\|Please run /login"; then
         log "AUTH EXPIRED: OAuth token expired — restart won't fix this. Run: tmux attach -t $SESSION → /login"
         # Touch a signal file so external monitoring can detect this
-        echo "$(date '+%Y-%m-%d %H:%M:%S') OAuth token expired" > /tmp/alba-auth-expired
-        send_alert "auth" "OAuth token expired — manual /login required"
+        if [ ! -f /tmp/alba-auth-expired ]; then
+            echo "$(date '+%Y-%m-%d %H:%M:%S') OAuth token expired" > /tmp/alba-auth-expired
+            send_alert "auth" "OAuth token expired — manual /login required"
+        else
+            log "OAuth still expired (alert already sent, suppressing duplicate)"
+        fi
         # Don't return unhealthy — restarting won't help. Just keep logging.
         return 0
     fi

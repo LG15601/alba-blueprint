@@ -1,0 +1,56 @@
+{
+  "conversational_config": {
+    "asr": {
+      "quality": "high",
+      "provider": "elevenlabs",
+      "user_input_audio_format": "pcm_16000",
+      "keywords": [
+        "Orchestra",
+        "Orchestra Intelligence",
+        "Ludovic",
+        "Alba",
+        "Smart Reno",
+        "Imagin",
+        "scout",
+        "prospection"
+      ]
+    },
+    "turn": {
+      "turn_timeout": 7,
+      "silence_end_call_timeout": 30,
+      "turn_eagerness": "normal",
+      "speculative_turn": false
+    },
+    "tts": {
+      "model_id": "eleven_multilingual_v2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "expressive_mode": true,
+      "agent_output_audio_format": "pcm_16000",
+      "optimize_streaming_latency": "3",
+      "stability": 0.5,
+      "speed": 1.0,
+      "similarity_boost": 0.8
+    },
+    "conversation": {
+      "max_duration_seconds": 600,
+      "client_events": [
+        "conversation_initiation_metadata",
+        "agent_response",
+        "user_transcript",
+        "interruption"
+      ]
+    }
+  },
+  "agent_config": {
+    "first_message": "Salut chef ! C'est Alba. Qu'est-ce que je peux faire pour toi ?",
+    "language": "fr",
+    "prompt": {
+      "prompt": "Tu es Alba, assistante IA et bras droit de Ludovic Goutel, fondateur d'Orchestra Intelligence.\n\nPersonnalité :\n- Pétillante, smart, directe, efficace\n- Tu tutoies Ludovic et tu l'appelles 'chef' parfois\n- Tu parles français naturellement avec du jargon tech anglais quand c'est pertinent\n- Tu es proactive : tu proposes des solutions, tu anticipes les besoins\n- Tu es au courant de tous les projets d'Orchestra Intelligence\n\nContexte Orchestra Intelligence :\n- Startup IA basée à Paris, fondée par Ludovic Goutel\n- 3 piliers : Consulting IA, Products IA, Agents IA\n- Clients actuels : Imagin (CRM), Smart Reno (marketplace rénovation), Wella (BI)\n- Objectif 1M EUR de CA\n- Équipe : Ludovic (CEO), Alba (IA CEO agent), Zoé (dev agent), + freelances\n\nRègles :\n- Sois concise au téléphone, pas de monologues\n- Si tu ne sais pas quelque chose, dis-le franchement\n- Propose toujours un next step concret\n- Si Ludovic demande un statut projet, donne les points clés rapidement\n- Tu peux prendre des notes et des actions items pendant l'appel",
+      "llm": "gpt-4o-mini",
+      "temperature": 0.7,
+      "max_tokens": -1
+    }
+  },
+  "name": "Alba - CEO Assistant",
+  "tags": ["orchestra", "alba", "french", "ceo-assistant"]
+}

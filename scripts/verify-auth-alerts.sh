@@ -117,6 +117,29 @@ else
     tap "FAIL" "Alert library uses alba_log for structured logging"
 fi
 
+# ---- Test 11: One-shot guard — signal file check before send_alert in check_auth_status ----
+# The pattern: if [ ! -f /tmp/alba-auth-expired ] wraps the send_alert call
+if grep -A3 'logged_in.*=.*"False"' "$SCRIPT" | grep -q '! -f /tmp/alba-auth-expired'; then
+    tap "ok" "check_auth_status has one-shot guard (checks signal file before alerting)"
+else
+    tap "FAIL" "check_auth_status has one-shot guard (checks signal file before alerting)"
+fi
+
+# ---- Test 12: One-shot guard — signal file check before send_alert in is_healthy Check 4 ----
+if grep -A4 'OAuth token has expired' "$SCRIPT" | grep -q '! -f /tmp/alba-auth-expired'; then
+    tap "ok" "is_healthy Check 4 has one-shot guard (checks signal file before alerting)"
+else
+    tap "FAIL" "is_healthy Check 4 has one-shot guard (checks signal file before alerting)"
+fi
+
+# ---- Test 13: Recovery clears signal file ----
+# Both check_auth_status (logged_in != False) and is_healthy (past Check 4) clear it
+if grep -c 'rm -f /tmp/alba-auth-expired' "$SCRIPT" | grep -qE '^[2-9]'; then
+    tap "ok" "Recovery paths clear /tmp/alba-auth-expired signal file (>=2 locations)"
+else
+    tap "FAIL" "Recovery paths clear /tmp/alba-auth-expired signal file (>=2 locations)"
+fi
+
 # ---- Summary ----
 TOTAL=$((PASS + FAIL))
 echo ""

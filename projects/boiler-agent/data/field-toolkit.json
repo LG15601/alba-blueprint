@@ -1,0 +1,46 @@
+{
+  "diagnostic_sequence": [
+    {"step": 1, "action": "Lire le code panne", "detail": "Noter le code, la date/heure, la récurrence sur l'écran T-Control"},
+    {"step": 2, "action": "Contrôle alimentation", "detail": "Électricité OK ? Fusible/disjoncteur principal ? Écran allumé ?"},
+    {"step": 3, "action": "Contrôle combustible", "detail": "Niveau silo ? Granulés couvrent la vis/les buses d'aspiration ?"},
+    {"step": 4, "action": "Contrôle pression", "detail": "Pression eau système dans la plage (1.5 bar à froid, 2 bar à chaud)"},
+    {"step": 5, "action": "Sécurités", "detail": "STB déclenché ? Soupape de sécurité a déchargé (traces d'eau) ? RSE intact ?"},
+    {"step": 6, "action": "Diagnostic composant", "detail": "Selon le code panne, tester le composant spécifique"},
+    {"step": 7, "action": "Analyse combustion", "detail": "Analyseur de fumées : O2, CO, CO2, rendement, tirage, T° fumées"},
+    {"step": 8, "action": "Test de marche", "detail": "Acquitter le défaut, redémarrer, surveiller un cycle complet"},
+    {"step": 9, "action": "Documentation", "detail": "Consigner : défaut, cause, pièces remplacées, résultats de test"}
+  ],
+  "essential_tools": [
+    {"name": "Multimètre numérique", "usage": "Test sondes, continuité, tension"},
+    {"name": "Pince ampèremétrique", "usage": "Courant moteur sans déconnexion"},
+    {"name": "Analyseur de combustion", "usage": "O2, CO, CO2, rendement, tirage, T° fumées", "models": ["Testo 310", "Testo 320", "Kane 458"]},
+    {"name": "Manomètre / déprimomètre", "usage": "Tirage cheminée, pression système"},
+    {"name": "Thermomètre IR / contact", "usage": "Température surface, diagnostic rapide"},
+    {"name": "Lampe torche puissante", "usage": "Inspection silo, foyer, conduits"},
+    {"name": "Aspirateur cendres", "usage": "Nettoyage chambre de combustion"},
+    {"name": "Kit ramonage", "usage": "Nettoyage conduit et turbulateurs"},
+    {"name": "Outillage standard", "usage": "Clés, tournevis, pinces, clés Allen"},
+    {"name": "Kit pièces courantes", "usage": "Sondes, allumeurs, fusibles, joints, condensateurs"}
+  ],
+  "safety_procedures": [
+    {"priority": 1, "action": "Isolation électrique", "detail": "Couper au tableau, puis au sectionneur. Consignation si nécessaire."},
+    {"priority": 2, "action": "Isolation combustible", "detail": "Fermer la vanne d'alimentation ou isoler la vis d'extraction."},
+    {"priority": 3, "action": "Refroidissement", "detail": "Attendre température sûre. Chaudière et conduit peuvent dépasser 200°C."},
+    {"priority": 4, "action": "Vérification zéro énergie", "detail": "Tester au VAT. Vérifier manomètres à zéro ou niveaux sûrs."},
+    {"priority": 5, "action": "EPI", "detail": "Gants anti-chaleur, lunettes, combinaison. Masque anti-poussière si nettoyage cendres."},
+    {"priority": 6, "action": "Ventilation", "detail": "Ventilation suffisante avant ouverture chambre de combustion (risque CO)."},
+    {"priority": 7, "action": "Protection anti-retour flamme", "detail": "Ne JAMAIS ouvrir le circuit d'alimentation chaudière chaude sans vérifier le RSE."}
+  ],
+  "commonly_replaced_parts": [
+    "Allumeur / soufflante d'allumage (usure normale, durée de vie limitée)",
+    "Grille / pot de combustion (tous les 6-18 mois selon usage)",
+    "Joints de porte et inspection (dégradation thermique)",
+    "Condensateurs moteur (moteurs monophasés)",
+    "Sondes de température (NTC, PT1000)",
+    "Sonde Lambda",
+    "Roulements moteur vis à cendres",
+    "Fusibles et relais",
+    "Roulements ventilateur de combustion"
+  ],
+  "market_gap": "Aucune application IA dédiée au dépannage chaudières biomasse multi-marques. Opportunité : combiner OCR codes panne + diagnostic guidé + pièces détachées + rapport intervention. Concurrents partiels : Bluon (HVAC gaz), Dezide (généraliste), IDRIS (monitoring seul)."
+}

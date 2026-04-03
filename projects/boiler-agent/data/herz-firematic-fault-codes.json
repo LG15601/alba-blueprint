@@ -1,0 +1,431 @@
+{
+  "manufacturer": "HERZ Energietechnik GmbH",
+  "model_range": "Firematic 80-301",
+  "controller": "T-CONTROL / BioControl 3000",
+  "source": "Official HERZ manuals (Pelletstar/Firematic Condensation + Firestar T-Control + BioMatic BioControl)",
+  "severity_levels": {
+    "I": { "label": "Information", "color": "blue", "action": "Aucune intervention requise" },
+    "W": { "label": "Avertissement", "color": "yellow", "action": "Surveiller la situation" },
+    "F": { "label": "Défaut", "color": "red", "action": "Intervention requise" }
+  },
+  "fault_codes": [
+    {
+      "code": "001",
+      "display": "SONDE CHAUDIERE",
+      "severity": "F",
+      "description": "Sonde température chaudière cassée ou hors plage (-10 à 120°C)",
+      "causes": ["Sonde PT1000 défectueuse", "Câble coupé ou court-circuit", "Connexion oxydée"],
+      "solution": ["Vérifier la résistance de la sonde (1000Ω à 0°C)", "Contrôler le câblage", "Remplacer la sonde si hors plage"],
+      "parts": [{"ref": "SP.00.00142", "name": "Sonde PT1000 TF25.200.03 +100°C"}],
+      "tools": ["Multimètre"],
+      "time_estimate": "20 min"
+    },
+    {
+      "code": "002",
+      "display": "SONDE FOYER",
+      "severity": "F",
+      "description": "Sonde température foyer cassée ou hors plage (0 à 1200°C)",
+      "causes": ["Thermocouple défectueux", "Câble brûlé", "Connexion desserrée"],
+      "solution": ["Vérifier la résistance du thermocouple", "Contrôler le câblage jusqu'au régulateur", "Remplacer la sonde"],
+      "parts": [{"ref": "SP.00.00146", "name": "Sonde combustion PS10-60, FM45-201"}],
+      "tools": ["Multimètre"],
+      "time_estimate": "30 min"
+    },
+    {
+      "code": "003",
+      "display": "SONDE FUMEES",
+      "severity": "F",
+      "description": "Sonde température fumées cassée ou hors plage (-10 à 600°C)",
+      "causes": ["Sonde PT1000 fumées défectueuse", "Câble endommagé par la chaleur", "Encrassement excessif"],
+      "solution": ["Vérifier la résistance", "Nettoyer le doigt de gant", "Remplacer la sonde"],
+      "parts": [{"ref": "SP.00.00175", "name": "Sonde température fumées/vis 400°C"}],
+      "tools": ["Multimètre"],
+      "time_estimate": "25 min"
+    },
+    {
+      "code": "005",
+      "display": "SONDE VIS ALIM",
+      "severity": "F",
+      "description": "Sonde température vis d'alimentation cassée ou hors plage (-10 à 300°C)",
+      "causes": ["Sonde défectueuse", "Câble coupé", "Retour de feu ayant endommagé la sonde"],
+      "solution": ["Vérifier la résistance", "Contrôler les signes de retour de feu", "Remplacer la sonde"],
+      "parts": [{"ref": "SP.00.00175", "name": "Sonde température vis 400°C"}],
+      "tools": ["Multimètre"],
+      "time_estimate": "25 min"
+    },
+    {
+      "code": "006",
+      "display": "FOYER-MAX",
+      "severity": "W",
+      "description": "Température foyer dépasse le paramètre maximum",
+      "causes": ["Excès de combustible", "Tirage trop fort", "Paramètres combustion mal réglés"],
+      "solution": ["Vérifier les paramètres de combustion", "Contrôler le tirage", "Réduire l'alimentation en combustible"],
+      "parts": [],
+      "tools": ["Analyseur de combustion"],
+      "time_estimate": "15 min"
+    },
+    {
+      "code": "025",
+      "display": "TEMP. MAX. DEPASSEE",
+      "severity": "W",
+      "description": "Température chaudière dépasse 92.5°C ou 104.5°C (selon config)",
+      "causes": [
+        "Pompe de circulation en panne ou grippée",
+        "Vanne mélangeuse retour bloquée fermée ou actionneur défectueux",
+        "Paramètres régulation incorrects (consignes trop hautes)",
+        "Ballon tampon plein sans demande de chaleur",
+        "Circuit hydraulique bouché (filtre, vanne fermée)",
+        "Trop de combustible par rapport à la demande"
+      ],
+      "solution": [
+        "Vérifier la température sur l'écran T-Control — si >90°C, laisser refroidir",
+        "Vérifier que la pompe de circulation tourne (écouter, vibration, indicateur de débit)",
+        "Tester l'actionneur vanne mélangeuse via le menu test composants T-Control",
+        "Contrôler la pression système au manomètre (min 1.5 bar à froid)",
+        "Inspecter les filtres/crépines du circuit hydraulique",
+        "Revoir les paramètres T-Control : consigne max chaudière, seuil activation pompe",
+        "Une fois la température redescendue, acquitter le défaut",
+        "Surveiller le prochain cycle de chauffe"
+      ],
+      "parts": [
+        {"ref": "SP.00.00142", "name": "Sonde PT1000 TF25.200.03 (si lecture suspecte)"},
+        {"ref": "SP.00.00289", "name": "Thermostat STB (limiteur de sécurité)"}
+      ],
+      "tools": ["Multimètre", "Manomètre", "Pince ampèremétrique"],
+      "time_estimate": "30-60 min",
+      "field_tips": "Vérifier EN PREMIER la pompe de circulation — cause n°1 de surchauffe. Si la pompe tourne mais pas de débit, chercher un bouchon d'air ou une vanne fermée."
+    },
+    {
+      "code": "026",
+      "display": "SURCHAUFFE",
+      "severity": "W",
+      "description": "Température chaudière dépasse 98°C ou 108°C",
+      "causes": ["Mêmes causes que code 025 mais plus graves", "Défaillance du système de sécurité"],
+      "solution": ["Même procédure que code 025", "Vérifier le STB (limiteur de sécurité)", "Contrôler la soupape de sécurité"],
+      "parts": [{"ref": "SP.00.00289", "name": "Thermostat STB"}],
+      "tools": ["Multimètre", "Manomètre"],
+      "time_estimate": "45-90 min"
+    },
+    {
+      "code": "038",
+      "display": "MAINTENANCE",
+      "severity": "I",
+      "description": "Intervalle de maintenance dépassé (1000h)",
+      "causes": ["Fonctionnement normal — entretien périodique requis"],
+      "solution": ["Effectuer l'entretien complet", "Réinitialiser le compteur dans T-Control"],
+      "parts": [],
+      "tools": ["Kit entretien standard"],
+      "time_estimate": "2-3h"
+    },
+    {
+      "code": "039",
+      "display": "SERVICE",
+      "severity": "I",
+      "description": "Intervalle de service dépassé (3000h)",
+      "causes": ["Fonctionnement normal — service approfondi requis"],
+      "solution": ["Effectuer le service complet", "Réinitialiser le compteur"],
+      "parts": [],
+      "tools": ["Kit service complet"],
+      "time_estimate": "4-6h"
+    },
+    {
+      "code": "041",
+      "display": "ARRET CHAUDIERE",
+      "severity": "I",
+      "description": "Installation en mode Arrêt — chaudière intentionnellement stoppée",
+      "causes": [
+        "Opérateur a mis la chaudière en mode Arrêt sur le T-Control",
+        "Signal de consigne externe a commandé l'arrêt (GTC/GTB)",
+        "Mode été ou programme horaire actif",
+        "Après acquittement d'un défaut, la chaudière peut rester en arrêt"
+      ],
+      "solution": [
+        "Naviguer vers l'écran principal T-Control",
+        "Vérifier le mode de fonctionnement — il affichera 'Arrêt chaudière'",
+        "Si arrêt intentionnel : aucune action",
+        "Si non intentionnel : basculer en mode 'Auto' ou 'Manuel'",
+        "Vérifier s'il y a eu un code défaut précédent",
+        "Contrôler le signal de consigne externe si pilotage par GTC",
+        "Vérifier le programme horaire (Mode horaire)"
+      ],
+      "parts": [],
+      "tools": [],
+      "time_estimate": "5 min",
+      "field_tips": "Code informatif — pas un défaut. Souvent trouvé après un défaut qui a stoppé la chaudière. Chercher le vrai défaut dans l'historique."
+    },
+    {
+      "code": "042",
+      "display": "ANTIBLOCAGE / DEGOMMAGE",
+      "severity": "I",
+      "description": "Protection antiblocage activée — cycle automatique chaque lundi à 12h00",
+      "causes": [
+        "Fonctionnement normal planifié — chaque lundi à 12h00",
+        "Active brièvement tous les composants mécaniques pour éviter le grippage"
+      ],
+      "solution": [
+        "Aucune intervention requise — comportement normal",
+        "Si le cycle ne se termine pas, vérifier les composants individuellement",
+        "Écouter les bruits anormaux pendant le cycle"
+      ],
+      "parts": [],
+      "tools": [],
+      "time_estimate": "0 min",
+      "field_tips": "Ne PAS confondre avec un défaut. Si le client signale que la chaudière fait du bruit le lundi midi, c'est normal."
+    },
+    {
+      "code": "063",
+      "display": "RSE OUVRIR",
+      "severity": "F",
+      "description": "Contact d'ouverture du clapet anti-retour de flamme (RSE) non atteint",
+      "causes": ["Clapet RSE bloqué en position fermée", "Servomoteur défectueux", "Contacteur fin de course déréglé"],
+      "solution": ["Vérifier le mouvement libre du clapet RSE", "Tester le servomoteur", "Régler le contacteur fin de course"],
+      "parts": [],
+      "tools": ["Multimètre", "Outillage standard"],
+      "time_estimate": "30-45 min"
+    },
+    {
+      "code": "064",
+      "display": "RSE FERMER",
+      "severity": "F",
+      "description": "Contact de fermeture du clapet RSE non atteint",
+      "causes": ["Débris bloquant la fermeture", "Ressort du servomoteur cassé", "Contacteur défectueux"],
+      "solution": ["Nettoyer le clapet", "Vérifier le ressort", "Tester le contacteur"],
+      "parts": [],
+      "tools": ["Multimètre"],
+      "time_estimate": "30-45 min"
+    },
+    {
+      "code": "065",
+      "display": "RSE CONTACTS",
+      "severity": "F",
+      "description": "Les deux contacts RSE actifs simultanément — défaut câblage",
+      "causes": ["Câble défectueux", "Court-circuit dans le câblage"],
+      "solution": ["Contrôler le câblage complet du RSE", "Remplacer le câble de connexion"],
+      "parts": [],
+      "tools": ["Multimètre"],
+      "time_estimate": "30 min"
+    },
+    {
+      "code": "066",
+      "display": "ALLUMER",
+      "severity": "F",
+      "description": "Pas d'allumage détecté après le délai d'allumage",
+      "causes": [
+        "Allumeur défectueux (résistance céramique ou soufflante Leister)",
+        "Pot de combustion encrassé — cendres bloquant les trous d'air",
+        "Combustible humide ou de mauvaise qualité",
+        "Pas de combustible dans le pot (problème alimentation)",
+        "Ventilateur de combustion en panne"
+      ],
+      "solution": [
+        "Vérifier si l'allumeur chauffe (toucher la buse après tentative — ATTENTION brûlure)",
+        "Tester la résistance de l'allumeur au multimètre (30-60Ω = OK)",
+        "Nettoyer le pot de combustion — déboucher tous les trous d'air",
+        "Vérifier la qualité du combustible (granulés ENplus A1)",
+        "Contrôler l'alimentation en combustible"
+      ],
+      "parts": [{"ref": "SP.00.00957", "name": "Soufflante d'allumage Leister 1600W"}],
+      "tools": ["Multimètre", "Aspirateur", "Brosse"],
+      "time_estimate": "30-60 min",
+      "field_tips": "Cause n°1 : pot de combustion encrassé. Nettoyer les trous d'air AVANT de suspecter l'allumeur."
+    },
+    {
+      "code": "067",
+      "display": "FEU ETEINT",
+      "severity": "F",
+      "description": "Pas de flamme détectée en cours de fonctionnement",
+      "causes": ["Manque de combustible", "Qualité combustible insuffisante", "Problème d'alimentation en air"],
+      "solution": ["Vérifier le niveau de combustible", "Contrôler la qualité", "Vérifier le ventilateur"],
+      "parts": [],
+      "tools": ["Analyseur combustion"],
+      "time_estimate": "30 min"
+    },
+    {
+      "code": "069",
+      "display": "STB",
+      "severity": "F",
+      "description": "Limiteur de sécurité thermique déclenché — refroidir en dessous de 75°C puis réarmer",
+      "causes": [
+        "Surchauffe grave de la chaudière",
+        "Pompe de circulation en panne",
+        "Vanne de sécurité thermique (TSV) ayant déchargé"
+      ],
+      "solution": [
+        "Laisser la chaudière refroidir en dessous de 75°C",
+        "Identifier et corriger la CAUSE de la surchauffe (voir code 025)",
+        "Réarmer le bouton rouge du STB (sur le corps de la chaudière)",
+        "Vérifier si la soupape de sécurité a déchargé (traces d'eau)"
+      ],
+      "parts": [{"ref": "SP.00.00289", "name": "Thermostat STB"}],
+      "tools": ["Multimètre"],
+      "time_estimate": "60-90 min",
+      "field_tips": "CRITIQUE : Ne jamais réarmer le STB sans avoir trouvé la cause. Si la TSV a déchargé, le système a été en danger — investigation obligatoire."
+    },
+    {
+      "code": "076",
+      "display": "COMBUSTIBLE",
+      "severity": "W",
+      "description": "Pas de combustible disponible / feu éteint / réservoir intermédiaire ne se remplit pas",
+      "causes": ["Silo vide", "Vis d'extraction bloquée", "Pont de granulés dans le silo"],
+      "solution": ["Vérifier le niveau de combustible dans le silo", "Contrôler la vis d'extraction", "Casser les ponts de granulés"],
+      "parts": [],
+      "tools": ["Lampe torche", "Tige pour casser les ponts"],
+      "time_estimate": "15-30 min"
+    },
+    {
+      "code": "080",
+      "display": "DISJ. EXTRACTION / THERM EXTRACTEUR",
+      "severity": "F",
+      "description": "Disjoncteur moteur de l'extraction silo déclenché — moteur en surcharge",
+      "causes": [
+        "Corps étranger dans le silo (pierre, métal, bois trop gros) bloquant la vis",
+        "Surcharge moteur — vis d'extraction usée, roulements grippés, désalignement",
+        "Pontage combustible exerçant une pression excessive sur la vis",
+        "Moteur défectueux — court-circuit interne ou bobinage HS",
+        "Disjoncteur fatigué — déclenchement à un courant inférieur au nominal",
+        "Défaut de câblage — connexion desserrée",
+        "Vis d'extraction bloquée — débris, corrosion, déformation"
+      ],
+      "solution": [
+        "COUPER l'alimentation principale au sectionneur (SP.00.01050)",
+        "Localiser et réarmer le disjoncteur moteur dans le tableau électrique",
+        "Inspecter visuellement le système d'extraction silo :",
+        "  - Ouvrir la trappe d'inspection du silo",
+        "  - Chercher les corps étrangers (pierres, métal, morceaux de bois)",
+        "  - Vérifier si le combustible a formé un pont au-dessus de la vis",
+        "Retirer tout corps étranger trouvé",
+        "Lancer le moteur d'extraction en mode test (test composants T-Control) — écouter :",
+        "  - Bruit anormal (grincement, crissement) = mécanique",
+        "  - Vibration excessive = désalignement",
+        "  - Surchauffe moteur = problème électrique ou mécanique",
+        "Mesurer le courant moteur à la pince ampèremétrique — comparer au courant nominal",
+        "Vérifier les roulements — rotation manuelle si possible",
+        "Vérifier le réglage du disjoncteur par rapport au courant nominal moteur",
+        "Acquitter le défaut et redémarrer",
+        "Surveiller — si le disjoncteur re-déclenche rapidement, la cause n'est pas résolue"
+      ],
+      "parts": [
+        {"ref": "SP.00.00300", "name": "Moteur vis d'alimentation 0.37kW 30mm"},
+        {"ref": "3030076-039", "name": "Moteur vis d'alimentation (réf. alternative)"}
+      ],
+      "tools": ["Pince ampèremétrique", "Multimètre", "Lampe torche", "Outillage d'accès silo"],
+      "time_estimate": "30-90 min",
+      "field_tips": "Commencer par le plus simple : réarmer le disjoncteur et tester. Si ça re-déclenche en <5 sec = blocage mécanique. Si ça tient 30 sec puis déclenche = surcharge (roulements, usure). Si ça ne re-déclenche pas = c'était ponctuel (corps étranger déjà passé)."
+    },
+    {
+      "code": "081",
+      "display": "REGIME VENTILATEUR",
+      "severity": "F",
+      "description": "Vitesse ventilateur ID hors limites pendant >10 secondes",
+      "causes": ["Ventilateur encrassé", "Roulement usé", "Variateur de fréquence défectueux"],
+      "solution": ["Nettoyer le ventilateur", "Vérifier les roulements", "Contrôler le variateur"],
+      "parts": [{"ref": "SP.00.00138", "name": "Ventilateur ID R2E 250-XX03-XP (FM199)"}],
+      "tools": ["Multimètre", "Tachymètre"],
+      "time_estimate": "45 min"
+    },
+    {
+      "code": "082",
+      "display": "NETT. GRILLE 1",
+      "severity": "F",
+      "description": "Problème nettoyage grille 1 — moteur, transmission ou fin de course",
+      "causes": ["Moteur de grille bloqué", "Transmission usée", "Mâchefer bloquant le mouvement"],
+      "solution": ["Vérifier le moteur de grille", "Nettoyer la grille des mâchefers", "Vérifier la transmission"],
+      "parts": [
+        {"ref": "SP.00.00174", "name": "Moto-réducteur grille basculante DAG 6502 5tr/min"},
+        {"ref": "SP.00.00148", "name": "Moteur grille poussante DAG-6502 3tr/min"}
+      ],
+      "tools": ["Outillage standard", "Aspirateur"],
+      "time_estimate": "45-60 min"
+    },
+    {
+      "code": "087",
+      "display": "CENDRIER",
+      "severity": "F",
+      "description": "Porte du bac à cendres ouverte",
+      "causes": ["Bac à cendres mal repositionné", "Contacteur de porte défectueux", "Bac plein empêchant la fermeture"],
+      "solution": ["Vider et repositionner le bac à cendres", "Vérifier le contacteur de porte"],
+      "parts": [],
+      "tools": [],
+      "time_estimate": "10 min",
+      "field_tips": "Souvent c'est juste le bac mal enfoncé. Pousser fermement jusqu'au clic."
+    },
+    {
+      "code": "090",
+      "display": "PORTE FOYER",
+      "severity": "F",
+      "description": "Contacteur fin de course porte foyer déclenché — porte ouverte",
+      "causes": ["Porte de la chambre de combustion ouverte ou mal fermée", "Contacteur défectueux", "Joint de porte usé"],
+      "solution": ["Fermer correctement la porte du foyer", "Vérifier le contacteur fin de course", "Remplacer le joint si usé"],
+      "parts": [{"ref": "SP.00.01051", "name": "Contacteur fin de course panneau frontal E200"}],
+      "tools": ["Multimètre"],
+      "time_estimate": "15 min"
+    },
+    {
+      "code": "093",
+      "display": "CLAPET BOURRAGE / FIN DE COURSE EXTRACTEUR",
+      "severity": "F",
+      "description": "Contact du clapet de bourrage de l'extraction (RA) activé — blocage dans le chemin d'alimentation",
+      "causes": [
+        "Blocage combustible dans le chemin d'alimentation (entre silo et chambre de combustion)",
+        "Clapet anti-retour de flamme (RSE) bloqué — servomoteur à ressort coincé",
+        "Contacteur fin de course défectueux ou déréglé",
+        "Corps étranger dans le puits de chute (entre vis extraction et vis d'alimentation)",
+        "Pression excessive du combustible — niveau silo trop haut",
+        "Vis d'alimentation (stoker) bloquée",
+        "Défaut câblage sur l'entrée numérique du contact de bourrage"
+      ],
+      "solution": [
+        "La chaudière va entrer en phase de fin de combustion et s'arrêter automatiquement — laisser terminer",
+        "COUPER l'alimentation principale au sectionneur",
+        "Inspecter le clapet RSE anti-retour de flamme :",
+        "  - Ouvrir le panneau d'accès",
+        "  - Vérifier que le clapet bouge librement",
+        "  - Chercher des débris de combustible bloquant le clapet",
+        "  - Vérifier le fonctionnement du servomoteur à ressort",
+        "Déboucher le chemin d'alimentation :",
+        "  - Vérifier le puits de chute entre vis extraction et vis stoker",
+        "  - Retirer tout matériau coincé",
+        "Vérifier le contacteur fin de course :",
+        "  - Tester le fonctionnement (ouverture/fermeture)",
+        "  - Vérifier la continuité au multimètre",
+        "  - Contrôler le câblage jusqu'au régulateur",
+        "Test papier sur le clapet RSE :",
+        "  - Placer une bande de papier entre le clapet et le logement",
+        "  - Fermer le clapet",
+        "  - Essayer de tirer le papier — s'il glisse facilement, régler le clapet",
+        "Inspecter la vis d'alimentation (stoker) pour blocage ou usure",
+        "Remettre sous tension et acquitter le défaut (auto-acquittement)",
+        "Lancer un test composants pour vérifier le fonctionnement de l'extraction"
+      ],
+      "parts": [
+        {"ref": "SP.00.01051", "name": "Contacteur fin de course panneau frontal E200"},
+        {"ref": "SP.00.00300", "name": "Moteur vis alimentation 0.37kW 30mm (si bloqué)"}
+      ],
+      "tools": ["Multimètre", "Lampe torche", "Outillage standard", "Bande de papier (test RSE)"],
+      "time_estimate": "30-60 min",
+      "field_tips": "Ce code se quittance automatiquement après résolution. Si le code revient en boucle : le problème est mécanique (bourrage récurrent). Vérifier la qualité du combustible — granulés avec trop de fines ou bois déchiqueté trop gros."
+    },
+    {
+      "code": "095",
+      "display": "CONTROLE CENDRIER",
+      "severity": "I",
+      "description": "Intervalle de contrôle du bac à cendres dépassé",
+      "causes": ["Bac à cendres potentiellement plein"],
+      "solution": ["Vider le bac à cendres", "Acquitter le message"],
+      "parts": [],
+      "tools": [],
+      "time_estimate": "10 min"
+    },
+    {
+      "code": "115",
+      "display": "DEPRESSION",
+      "severity": "F",
+      "description": "Tirage cible non atteint après 2 cycles de nettoyage",
+      "causes": ["Conduit encrassé", "Turbulateurs bouchés", "Ventilateur ID défectueux", "Porte/trappe mal fermée"],
+      "solution": ["Ramoner le conduit", "Nettoyer les turbulateurs", "Vérifier le ventilateur", "Contrôler l'étanchéité"],
+      "parts": [],
+      "tools": ["Déprimomètre", "Kit ramonage"],
+      "time_estimate": "60-90 min"
+    }
+  ]
+}
