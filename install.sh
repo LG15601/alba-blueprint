@@ -25,6 +25,7 @@ command -v claude >/dev/null && ok "Claude Code $(claude --version 2>/dev/null |
 command -v git >/dev/null && ok "Git" || { fail "Git not found"; exit 1; }
 command -v gh >/dev/null && ok "GitHub CLI" || warn "GitHub CLI not found. Install: brew install gh"
 command -v tmux >/dev/null && ok "tmux" || { warn "tmux not found. Install: brew install tmux"; }
+command -v ollama >/dev/null && ok "Ollama $(ollama --version 2>/dev/null | head -1)" || warn "Ollama not installed. Install: brew install ollama && ollama pull gemma4"
 echo ""
 
 # 2. Create directory structure

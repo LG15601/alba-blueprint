@@ -31,6 +31,14 @@ if ! tmux has-session -t alba-agent 2>/dev/null; then
     echo "[$(date)] WARNING: tmux session 'alba-agent' not found" >> "$ALERT_LOG"
 fi
 
+# Check Ollama (local LLM fallback)
+if curl -sf --max-time 5 http://localhost:11434/ > /dev/null 2>&1; then
+    OLLAMA_MODELS=$(curl -sf --max-time 5 http://localhost:11434/api/tags 2>/dev/null | jq -r '[.models[].name] | join(", ")' 2>/dev/null || echo "unknown")
+    echo "[$(date)] OK: Ollama running, models: $OLLAMA_MODELS" >> "$LOG"
+else
+    echo "[$(date)] WARNING: Ollama not running at localhost:11434" >> "$ALERT_LOG"
+fi
+
 # Rotate log (keep last 1000 lines)
 if [ -f "$LOG" ] && [ $(wc -l < "$LOG") -gt 1000 ]; then
     tail -500 "$LOG" > "$LOG.tmp" && mv "$LOG.tmp" "$LOG"
