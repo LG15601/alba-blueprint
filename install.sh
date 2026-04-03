@@ -85,6 +85,16 @@ if command -v claude >/dev/null && claude skills list >/dev/null 2>&1; then
 fi
 echo ""
 
+# 5b. Install commands (slash commands)
+echo "--- Step 5b: Commands ---"
+for cmd_dir in "$SCRIPT_DIR"/commands/*/; do
+    [ -d "$cmd_dir" ] || continue
+    cmd_name=$(basename "$cmd_dir")
+    cp -r "$cmd_dir" ~/.claude/commands/"$cmd_name"
+done
+ok "$(ls -d "$SCRIPT_DIR"/commands/*/ 2>/dev/null | wc -l | tr -d ' ') command namespaces installed"
+echo ""
+
 # 6. Install rules
 echo "--- Step 6: Rules ---"
 mkdir -p ~/.claude/rules
