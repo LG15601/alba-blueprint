@@ -72,7 +72,7 @@ PORTALS = {
     "hostinger": {
         "name": "Hostinger",
         "url": "https://hpanel.hostinger.com/billing/invoices",
-        "account": "sales@orchestraintelligence.fr",
+        "account": "ludovic.goutel@gmail.com",
         "auth_method": "google_sso",
         "task": """Find all invoices from January, February, March 2026.
         Download each invoice PDF.
@@ -89,7 +89,7 @@ PORTALS = {
     "ageo": {
         "name": "Ageo (Mutuelle)",
         "url": "https://www.ageo.fr",
-        "account": "sales@orchestraintelligence.fr",
+        "account": "ludovic.goutel@gmail.com",
         "auth_method": "direct",
         "task": """Login to the Ageo member portal. Find receipts/attestations for January, February, March 2026.
         Download any available documents. Report what you find.""",
@@ -123,7 +123,7 @@ PORTALS = {
     "google_one": {
         "name": "Google One",
         "url": "https://one.google.com/u/0/storage",
-        "account": "sales@orchestraintelligence.fr",
+        "account": "ludovic.goutel@gmail.com",
         "auth_method": "google_sso",
         "task": """Navigate to payment history/receipts. Find receipts for January, February, March 2026 (21.99 EUR each).
         Report what you find.""",
