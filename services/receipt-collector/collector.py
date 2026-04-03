@@ -41,13 +41,23 @@ load_env()
 
 # Portal definitions
 PORTALS = {
-    "openai": {
-        "name": "OpenAI",
+    "openai_api": {
+        "name": "OpenAI API (sales@)",
         "url": "https://platform.openai.com/settings/organization/billing/overview",
-        "account": "ludovic@orchestraintelligence.fr",
+        "account": "sales@orchestraintelligence.fr",
         "auth_method": "google_sso",
         "task": """Navigate to the billing page. Find all invoices from January, February, March 2026.
         For each invoice, click to download the PDF receipt.
+        Report all invoices found with dates and amounts.""",
+    },
+    "openai_chatgpt": {
+        "name": "OpenAI ChatGPT (ludovic@)",
+        "url": "https://chatgpt.com/account/manage",
+        "account": "ludovic@orchestraintelligence.fr",
+        "auth_method": "google_sso",
+        "task": """Navigate to billing/subscription. Find invoices or receipts from January, February, March 2026.
+        Especially looking for ChatGPT Pro 229 EUR (March 3) and ChatGPT Plus 23 EUR x3.
+        Download any available invoice PDFs.
         Report all invoices found with dates and amounts.""",
     },
     "fnac": {
@@ -255,11 +265,13 @@ async def collect_portal(portal_key: str):
 
     # Extract result
     result_text = "No result"
-    for item in reversed(history.history):
-        if hasattr(item, 'result') and item.result:
-            if item.result.is_done and item.result.extracted_content:
-                result_text = item.result.extracted_content
-                break
+    try:
+        for item in history.all_results:
+            if hasattr(item, 'is_done') and item.is_done and item.extracted_content:
+                result_text = item.extracted_content
+    except AttributeError:
+        # Fallback: try string representation
+        result_text = str(history)[-500:]
 
     print(f"\nResult: {result_text}")
 
